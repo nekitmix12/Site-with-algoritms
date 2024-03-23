@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="A_star.js"></script> <!-- Подключаем скрипт A_star.js -->
+    <script src="GeneticAlgorithm.js"></script> <!-- Подключаем скрипт GeneticAlgorithm.js -->
+    <script src="AntColony.js"></script> <!-- Подключаем скрипт AntColony.js -->
+    <link rel="stylesheet" href="style.css"> <!-- Подключаем стили -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+<button id="menuButton">Menu</button>
+<script>
+document.getElementById('menuButton').addEventListener('click', function() {
+var menu = document.getElementById('menu');
+if (menu.style.display === 'none') {
+menu.style.display = 'block';
+} else {
+menu.style.display = 'none';
+}
+});
+</script>
+
+
+<div id="menu" style="display: none;">
+    <button>Button 1</button>
+    <button>Button 2</button>
+    <button>Button 3</button>
+    <button>Button 4</button>
+    <button>Button 5</button>
+</div>
+
+
+</body>
+<footer>
+    Над проектом работали: Верховский Никита, Горохов Денис, Скажутин Никита
+</footer>
+</html>
