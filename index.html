@@ -2,40 +2,64 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <script src="A_star.js"></script> <!-- Подключаем скрипт A_star.js -->
-    <script src="GeneticAlgorithm.js"></script> <!-- Подключаем скрипт GeneticAlgorithm.js -->
-    <script src="AntColony.js"></script> <!-- Подключаем скрипт AntColony.js -->
-    <link rel="stylesheet" href="style.css"> <!-- Подключаем стили -->
+    <script src="A_star.js"></script>
+    <script src="GeneticAlgorithm.js"></script>
+    <script src="AntColony.js"></script>
+    <link rel="stylesheet" href="style.css">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-<body>
-
-<button id="menuButton">Menu</button>
-<script>
-document.getElementById('menuButton').addEventListener('click', function() {
-var menu = document.getElementById('menu');
-if (menu.style.display === 'none') {
-menu.style.display = 'block';
-} else {
-menu.style.display = 'none';
-}
-});
-</script>
 
 
-<div id="menu" style="display: none;">
-    <button>Button 1</button>
-    <button>Button 2</button>
-    <button>Button 3</button>
-    <button>Button 4</button>
-    <button>Button 5</button>
+<div id="centered-text">
+    Эти алгоритмы просто космос
 </div>
+<button id="centered-button">
+    О проекте
+</button>
+<div id="project-info">
+    <p>Привет!</p>
+    <p>Это проект, выполненный в рамках обучения на программе HITs!</p>
+    <p>Здесь представлены различные алгоритмы, нажми на кнопки сверху, чтобы озакомиться с ними!</p>
+    <p>Над проектом работали</p>
+    <ul>
+        <li>Верховский Никита</li>
+        <li>Горохов Денис</li>
+        <li>Скажутин Никита</li>
+    </ul>
+</div>
+<script>
+    document.getElementById('centered-button').addEventListener('click', function () {
+        var projectInfo = document.getElementById('project-info');
+        var centeredButton = document.getElementById('centered-button');
+        var centeredText = document.getElementById('centered-text');
+        if (projectInfo.style.display === 'none') {
+            projectInfo.style.display = 'block';
+            centeredButton.style.display = 'none';
+            centeredText.style.display = 'none';
+        } else {
+            projectInfo.style.display = 'none';
+            centeredButton.style.display = 'block';
+            centeredText.style.display = 'block';
+        }
+    });
 
-
-</body>
+    document.getElementById('project-info').addEventListener('click', function () {
+        this.style.display = 'none';
+        document.getElementById('centered-button').style.display = 'block';
+        document.getElementById('centered-text').style.display = 'block';
+    });
+</script>
+<div id="menu">
+    <button class="star">А*</button>
+    <button class="ant">Муравьиный алгоритм</button>
+    <button class="dna">Генетический алгоритм</button>
+    <button class="cluster">Алгоритм кластеризации</button>
+    <button class="ai">Нейронная сеть</button>
+    <button class="tree">Дерево решений</button>
+</div>
 <footer>
-    Над проектом работали: Верховский Никита, Горохов Денис, Скажутин Никита
+    <u>made by HITs students 2024</u>
 </footer>
 </html>
