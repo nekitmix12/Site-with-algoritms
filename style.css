@@ -1,5 +1,5 @@
 body {
-    background-image: url('background.jpg');
+    background-image: url('resources/background.jpg');
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
@@ -21,7 +21,7 @@ footer {
     width: 2vw;
     height: 2vw;
     margin-right: 5px;
-    background-image: url('star.svg');
+    background-image: url('resources/star.svg');
     background-size: contain;
     background-repeat: no-repeat;
 }
@@ -38,7 +38,7 @@ footer {
     background-repeat: no-repeat;
 }
 .star::before {
-    background-image: url('star.svg');
+    background-image: url('resources/star.svg');
 }
 
 .star {
@@ -46,23 +46,23 @@ footer {
 }
 
 .ant::before {
-    background-image: url('ant.svg');
+    background-image: url('resources/ant.svg');
 }
 
 .dna::before {
-    background-image: url('dna.svg');
+    background-image: url('resources/dna.svg');
 }
 
 .cluster::before {
-    background-image: url('cluster.svg');
+    background-image: url('resources/cluster.svg');
 }
 
 .ai::before {
-    background-image: url('ai.svg');
+    background-image: url('resources/ai.svg');
 }
 
 .tree::before {
-    background-image: url('tree.svg');
+    background-image: url('resources/tree.svg');
 }
 
 #centered-button {
