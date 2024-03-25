@@ -1,5 +1,5 @@
 body {
-    background-image: url('background.jpg');
+    background-image: url('resources/background.jpg');
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
@@ -15,19 +15,8 @@ footer {
     font-family: Arial, sans-serif;
     text-shadow: 1px 1px #2c3e50;
 }
-.star::before {
-    content: "";
-    display: inline-block;
-    width: 2vw;
-    height: 2vw;
-    margin-right: 5px;
-    background-image: url('star.svg');
-    background-size: contain;
-    background-repeat: no-repeat;
-}
-.star {
-    margin-left: 5%;
-}
+
+
 .star::before, .ant::before, .dna::before, .cluster::before, .ai::before, .tree::before {
     content: "";
     display: inline-block;
@@ -36,33 +25,36 @@ footer {
     margin-right: 5px;
     background-size: contain;
     background-repeat: no-repeat;
+
 }
+.star{
+    margin-left: 5%;
+}
+
 .star::before {
-    background-image: url('star.svg');
+    background-image: url('resources/star.svg');
 }
 
-.star {
-
-}
 
 .ant::before {
-    background-image: url('ant.svg');
+    background-image: url('resources/ant.svg');
 }
 
 .dna::before {
-    background-image: url('dna.svg');
+    background-image: url('resources/dna.svg');
 }
 
 .cluster::before {
-    background-image: url('cluster.svg');
+    background-image: url('resources/cluster.svg');
 }
 
 .ai::before {
-    background-image: url('ai.svg');
+    background-image: url('resources/ai.svg');
 }
 
 .tree::before {
-    background-image: url('tree.svg');
+    background-image: url('resources/tree.svg');
+
 }
 
 #centered-button {
@@ -122,6 +114,11 @@ footer {
     display: none;
     z-index: 9999;
 }
+#menu button:not(.tree) {
+
+    border-right: 2px solid white;
+
+}
 #menu {
     position: absolute;
     top: 0;
@@ -145,7 +142,7 @@ footer {
     transform: translate(-50%, -50%);
     text-align: center;
     color: white;
-    font-size: 2vw;
+    font-size: 3vw;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 #menu button {
@@ -154,6 +151,7 @@ footer {
     margin-bottom: 10px;
     color: #fff;
     border: 0px;
+    padding: 10vh 1vh;
     font-size: 2vw;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     cursor: pointer;
