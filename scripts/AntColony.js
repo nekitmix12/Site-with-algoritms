@@ -3,6 +3,12 @@
  * @param {number[][]} matrix Матрица с препятствиями, где 0 - свободная клетка, 1 - занятая.
  * @param {{x: number, y: number}} start Стартовая позиция муравьев.
  * @param {{x: number, y: number}[]} targets Массив координат точек, которые нужно достичь.
+ * @param {number} numAnts Количество муравьев.
+ * @param {number} maxIterations Максимальное количество итераций алгоритма.
+ * @param {number} Q Коэффициент феромона
+ * @param {number} rho  Коэффициент испарения феромона
+ * @param {number} alpha Параметр альфа для влияния феромона
+ * @param {number} beta // Параметр бета для влияния видимости
  * @returns {Object[]} Массив всех промежуточных путей между начальной точкой и всеми целевыми точками.
  */
 function antColonyOptimization(matrix, start, targets,
@@ -160,12 +166,12 @@ function antColonyOptimization(matrix, start, targets,
 }
 
 // Пример использования
-const numAnts = 10; // Количество муравьев
-const maxIterations = 100; // Максимальное количество итераций
-const Q = 100; // Коэффициент феромона
-const rho = 0.1; // Коэффициент испарения феромона
-const alpha = 1; // Параметр альфа для влияния феромона
-const beta = 2; // Параметр бета для влияния видимости
+const numAnts = 10;
+const maxIterations = 100;
+const Q = 100;
+const rho = 0.1;
+const alpha = 1;
+const beta = 2;
 let matrix = [
     [0, 0, 0, 1, 0],
     [0, 1, 0, 1, 0],
