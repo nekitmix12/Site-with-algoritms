@@ -1,179 +1,180 @@
-/* Пример использования
+/**
+ * Решение задачи коммивояжера методом муравьиной оптимизации в лабиринте с препятствиями.
+ * @param {number[][]} matrix Матрица с препятствиями, где 0 - свободная клетка, 1 - занятая.
+ * @param {{x: number, y: number}} start Стартовая позиция муравьев.
+ * @param {{x: number, y: number}[]} targets Массив координат точек, которые нужно достичь.
+ * @returns {Object[]} Массив всех промежуточных путей между начальной точкой и всеми целевыми точками.
+ */
+function antColonyOptimization(matrix, start, targets,
+                               numAnts, maxIterations, Q, rho, alpha, beta) {
+    const numNodes = matrix.length * matrix[0].length;
+    const distanceMatrix = calculateDistanceMatrix(matrix);
 
- alpha: Параметр, который определяет влияние количества феромона на вероятность выбора пути муравьем.
- Большее значение alpha увеличивает роль следа феромона в поведении муравья.
-
- beta: Параметр, который определяет влияние видимости (обратное значение расстояния) на вероятность выбора пути
- муравьем. Большее значение beta увеличивает роль расстояния до следующей точки при выборе пути.
-
-evaporationRate: Скорость испарения феромона. Это значение между 0 и 1 и определяет, как быстро следы феромона
- исчезают со временем. Меньшее значение приводит к более быстрому исчезновению феромона, что может помочь избежать
- локальных оптимумов. (Уменьшает шанс выбора неверного пути)
-
- iterations: Количество итераций алгоритма. Это число определяет, сколько раз колония муравьев будет исследовать
- возможные пути, прежде чем будет выбран окончательный путь.
-
- numberOfAnts: Количество муравьев, используемых в алгоритме. Каждый муравей независимо исследует пути, и их
- коллективное поведение используется для определения оптимального пути.
-*/
-// функция для вычисления расстояния между двумя точками методом Мура
-function calculateDistance(pointA, pointB) {
-    return Math.max(Math.abs(pointA.x - pointB.x), Math.abs(pointA.y - pointB.y));
-}
-
-function initializePheromones(numberOfPoints, initialValue) {
-    // Создание матрицы феромонов с начальным значением
-    const pheromones = [];
-    for (let i = 0; i < numberOfPoints; i++) {
-        pheromones[i] = [];
-        for (let j = 0; j < numberOfPoints; j++) {
-            pheromones[i][j] = initialValue;
+    function initializeAnts(numAnts, startNode) {
+        let ants = [];
+        for (let i = 0; i < numAnts; i++) {
+            ants.push({
+                path: [startNode],
+                visited: new Set([startNode]),
+                currentPosition: startNode
+            });
         }
+        return ants;
     }
-    return pheromones;
-}
 
+    function selectNextNode(currentNode, availableNodes, pheromone, alpha, beta) {
+        let probabilities = [];
+        let totalProbability = 0;
 
-function antColonyOptimization(points, alpha, beta, evaporationRate, iterations, numberOfAnts) {
-    // инициализация матрицы феромонов
-    const numberOfPoints = points.length;
-    let pheromoneMatrix = initializePheromones(numberOfPoints, 1);
-    let bestPath = [];
-    let bestPathLength = Infinity;
-
-    // цикл для итераций алгоритма (каждая итерация - это один проход колонии муравьев)
-    for (let iter = 0; iter < iterations; ++iter) {
-        let antsPaths = [];
-        let antsPathLengths = [];
-
-        // цикл для каждого муравья
-        for (let i = 0; i < numberOfAnts; ++i) {
-            // инициализация пути для текущего муравья
-            let path = [];
-            let visited = new Set();
-            // Выбор случайной начальной точки
-            let current = i % numberOfPoints;
-            // Добавление начальной точки в путь и список посещенных точек
-            path.push(current);
-            visited.add(current);
-
-            // цикл для посещения всех точек
-            for (let step = 0; step < numberOfPoints - 1; ++step) {
-                // Выбор следующей точки для посещения
-                let next = selectNextPoint(current, points, visited, pheromoneMatrix, alpha, beta);
-                // Добавление следующей точки в путь и список посещенных точек
-                path.push(next);
-                visited.add(next);
-                current = next;
+        availableNodes.forEach(node => {
+            if (distanceMatrix[currentNode] && distanceMatrix[currentNode][node]) {
+                let pheromoneLevel = pheromone[currentNode][node];
+                let visibility = 1 / distanceMatrix[currentNode][node];
+                let probability = Math.pow(pheromoneLevel, alpha) * Math.pow(visibility, beta);
+                probabilities.push({ node, probability });
+                totalProbability += probability;
             }
-            // Вычисление длины пути и добавление пути и его длины в соответствующие списки
-            let pathLength = getPathLength(path, points);
-            antsPaths.push(path);
-            antsPathLengths.push(pathLength);
+        });
 
-            // обновление лучшего пути, если текущий путь короче
-            if (pathLength < bestPathLength) {
-                bestPath = path;
-                bestPathLength = pathLength;
+        probabilities.forEach(prob => {
+            prob.probability /= totalProbability;
+        });
+
+        let randomValue = Math.random();
+        let cumulativeProbability = 0;
+        for (let i = 0; i < probabilities.length; i++) {
+            cumulativeProbability += probabilities[i].probability;
+            if (randomValue <= cumulativeProbability) {
+                return probabilities[i].node;
             }
         }
 
-        // обновление матрицы феромонов
-        pheromoneMatrix = evaporatePheromones(pheromoneMatrix, evaporationRate);
-        pheromoneMatrix = updatePheromones(pheromoneMatrix, antsPaths, antsPathLengths, alpha);
+        return availableNodes[Math.floor(Math.random() * availableNodes.length)];
     }
 
-    return { bestPath, bestPathLength };
-}
+    function updatePheromone(pheromone, ants, Q, rho) {
+        ants.forEach(ant => {
+            let pathLength = calculatePathLength(ant.path, distanceMatrix);
+            for (let i = 0; i < ant.path.length - 1; i++) {
+                let fromNode = ant.path[i];
+                let toNode = ant.path[i + 1];
+                if (pheromone[fromNode] && pheromone[fromNode][toNode]) {
+                    pheromone[fromNode][toNode] += Q / pathLength;
+                    pheromone[toNode][fromNode] = pheromone[fromNode][toNode];
+                }
+            }
+        });
 
-// функция для выбора следующей точки для посещения муравьем
-function selectNextPoint(current, points, visited, pheromoneMatrix, alpha, beta) {
-    // список вероятностей для каждой непосещенной точки
-    let probabilities = [];
-    let total = 0;
-
-    // вычисление общей суммы вероятностей для непосещенных точек
-    points.forEach((point, index) => {
-        if (!visited.has(index)) {
-            // Расчет вероятности для текущей точки
-            let tau = Math.pow(pheromoneMatrix[current][index], alpha);
-            // Расчет видимости (обратное расстояние) для текущей точки
-            let eta = Math.pow(1 / calculateDistance(points[current], point), beta);
-            // Общая вероятность для текущей точки
-            total += tau * eta;
-            // Добавление вероятности в список вероятностей
-            probabilities[index] = { index, probability: tau * eta };
-        }
-    });
-    // Нормализация вероятностей
-    probabilities = probabilities.filter(p => p);
-    probabilities.forEach(p => p.probability /= total);
-
-    let random = Math.random();
-    let sum = 0;
-
-    // выбор следующей точки на основе вероятностей
-    for (let i = 0; i < probabilities.length; ++i) {
-        sum += probabilities[i].probability;
-        // Если сумма вероятностей превышает случайное число, выбираем эту точку
-        if (random <= sum) {
-            return probabilities[i].index;
+        for (let i = 0; i < pheromone.length; i++) {
+            if (!pheromone[i]) continue;
+            for (let j = 0; j < pheromone[i].length; j++) {
+                if (pheromone[i][j]) {
+                    pheromone[i][j] *= (1 - rho);
+                }
+            }
         }
     }
-    // Если случайное число больше всех вероятностей, выбираем последнюю точку
-    return probabilities[probabilities.length - 1].index;
-}
 
-
-function getPathLength(path, points) {
-    let length = 0;
-    // Вычисление длины пути, суммируя расстояния между точками
-    for (let i = 0; i < path.length - 1; ++i) {
-        length += calculateDistance(points[path[i]], points[path[i + 1]]);
-    }
-    // Добавление расстояния от последней точки к первой
-    length += calculateDistance(points[path[0]], points[path[path.length - 1]]);
-    return length;
-}
-
-
-function evaporatePheromones(pheromoneMatrix, evaporationRate) {
-    return pheromoneMatrix.map(row => row.map(p => p * (1 - evaporationRate)));
-}
-
-// функция для обновления феромонов в матрице феромонов на основе путей, пройденных муравьями
-function updatePheromones(pheromoneMatrix, antsPaths, antsPathLengths, alpha) {
-    // Обновление феромонов на основе длины пути, пройденного муравьем
-    antsPaths.forEach((path, index) => {
-        // Вклад муравья в феромоны
-        let contribution = Math.pow(1 / antsPathLengths[index], alpha);
-        // Обновление феромонов для каждой пары точек в пути
-        for (let i = 0; i < path.length - 1; ++i) {
-            // Обновление феромонов для двух направлений
-            pheromoneMatrix[path[i]][path[i + 1]] += contribution;
-            pheromoneMatrix[path[i + 1]][path[i]] += contribution;
+    function calculatePathLength(path, distanceMatrix) {
+        let length = 0;
+        for (let i = 0; i < path.length - 1; i++) {
+            if (distanceMatrix[path[i]] && distanceMatrix[path[i]][path[i + 1]]) {
+                length += distanceMatrix[path[i]][path[i + 1]];
+            }
         }
-        // Обновление феромонов для последней и первой точек
-        pheromoneMatrix[path[path.length - 1]][path[0]] += contribution;
-    });
-    return pheromoneMatrix;
+        return length;
+    }
+
+    function calculateDistanceMatrix(matrix) {
+        let distanceMatrix = [];
+        for (let i = 0; i < matrix.length; i++) {
+            distanceMatrix[i] = [];
+            for (let j = 0; j < matrix[i].length; j++) {
+                distanceMatrix[i][j] = findPath({ x: i, y: j }, targets, matrix);
+            }
+        }
+        return distanceMatrix;
+    }
+
+    function findPath(startNode, targets, matrix) {
+        let paths = [];
+        let queue = [{ position: startNode, steps: 0, path: [startNode] }];
+        let visited = new Set();
+        visited.add(`${startNode.x},${startNode.y}`);
+
+        while (queue.length > 0) {
+            let current = queue.shift();
+
+            if (targets.some(target => target.x === current.position.x && target.y === current.position.y)) {
+                paths.push(current.path);
+            }
+
+            const neighbors = [
+                { x: current.position.x + 1, y: current.position.y },
+                { x: current.position.x - 1, y: current.position.y },
+                { x: current.position.x, y: current.position.y + 1 },
+                { x: current.position.x, y: current.position.y - 1 }
+            ];
+
+            neighbors.forEach(neighbor => {
+                if (
+                    neighbor.x >= 0 &&
+                    neighbor.x < matrix.length &&
+                    neighbor.y >= 0 &&
+                    neighbor.y < matrix[0].length &&
+                    matrix[neighbor.x][neighbor.y] === 0 &&
+                    !visited.has(`${neighbor.x},${neighbor.y}`)
+                ) {
+                    visited.add(`${neighbor.x},${neighbor.y}`);
+                    queue.push({ position: neighbor, steps: current.steps + 1, path: [...current.path, neighbor] });
+                }
+            });
+        }
+
+        return paths;
+    }
+
+    let ants = initializeAnts(numAnts, start);
+    let pheromone = Array.from({ length: numNodes }, () => Array.from({ length: numNodes }, () => 1));
+
+    for (let iter = 0; iter < maxIterations; iter++) {
+        ants.forEach(ant => {
+            let currentNode = ant.currentPosition;
+            let availableNodes = [];
+            for (let i = 0; i < numNodes; i++) {
+                if (!ant.visited.has(i) && i !== currentNode) {
+                    availableNodes.push(i);
+                }
+            }
+
+            let nextNode = selectNextNode(currentNode, availableNodes, pheromone, alpha, beta);
+            ant.path.push(nextNode);
+            ant.visited.add(nextNode);
+            ant.currentPosition = nextNode;
+        });
+
+        updatePheromone(pheromone, ants, Q, rho);
+    }
+
+    return findPath(start, targets, matrix);
 }
 
-
-const points = [
-    { x: 0, y: 0 }, // Точка 0
-    { x: 1, y: 2 }, // Точка 1
-    { x: -1, y: 2 }, // Точка 2
+// Пример использования
+const numAnts = 10; // Количество муравьев
+const maxIterations = 100; // Максимальное количество итераций
+const Q = 100; // Коэффициент феромона
+const rho = 0.1; // Коэффициент испарения феромона
+const alpha = 1; // Параметр альфа для влияния феромона
+const beta = 2; // Параметр бета для влияния видимости
+let matrix = [
+    [0, 0, 0, 1, 0],
+    [0, 1, 0, 1, 0],
+    [0, 0, 0, 0, 0],
+    [0, 1, 1, 1, 0],
+    [0, 0, 0, 1, 0]
 ];
-const alpha = 1;
-const beta = 5;
-const evaporationRate = 0.5;
-const iterations = 100;
-const numberOfAnts = 10;
+let start = { x: 0, y: 0 };
+let targets = [{ x: 4, y: 4 }, { x: 3, y: 3 }, {x: 1, y: 2}, {x: 4, y: 0}];
 
-// Результат вычислений
-const result = antColonyOptimization(points, alpha, beta, evaporationRate, iterations, numberOfAnts);
-
-// Проверка значений в консоли
-console.log(result.bestPath); // Выводит кратчайший путь, последовательность из индексов точек, которые по порядку нужно соединить путями
-console.log(result.bestPathLength); // Выводит длину кратчайшего пути (вычисляется методом Мура)
+let paths = antColonyOptimization(matrix, start, targets, numAnts, maxIterations, Q, rho, alpha, beta);
+console.log(paths);
