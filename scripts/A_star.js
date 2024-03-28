@@ -112,7 +112,7 @@ function aStarSearch(grid, start, goal) {
     const path = [];
     let current = goalNode;
     while (current !== null && cameFrom.has(nodeKey(current))) {
-        path.push([current.x, current.y]);
+        path.push([current.y, current.x]);
         current = cameFrom.get(nodeKey(current));
     }
     path.reverse();

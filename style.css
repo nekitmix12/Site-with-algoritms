@@ -177,3 +177,14 @@ footer {
     border: 1px solid black;
     display: inline-block;
 }
+
+#fieldCanvas{
+    background-color: cornsilk;
+    color: #0366d6;
+
+}
+#startButton{
+    background-color: #ea0707;
+    color: #0366d6;
+    position: absolute;
+}
