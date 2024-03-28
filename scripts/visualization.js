@@ -4,6 +4,7 @@ let finishCoordinate = [];
 let row;
 let col;
 let sliderValue;
+
 function creatArea(aStarSearch) {
     let canvas = document.getElementById('fieldCanvas');
     let buttonClear = document.getElementById('clearButton');
@@ -20,20 +21,20 @@ function creatArea(aStarSearch) {
     let canvasField = canvas.getContext('2d');
 
 
-
     slider.addEventListener('input', sliderManage);
     buttonClear.addEventListener("click", buttonClearManege);
-    borderGeneration.addEventListener('click',borderGenerationManege);
+    borderGeneration.addEventListener('click', borderGenerationManege);
 
     createMatrix();
 
 
-    function borderGenerationManege(){
+    function borderGenerationManege() {
         clearField();
         updateMatrix();
         matrixA_star = generateMaze(0.6);
         drawMapByMatrix(matrixA_star);
     }
+
     function sliderManage() {
         sliderValue = slider.value;
         clearField();
@@ -41,31 +42,36 @@ function creatArea(aStarSearch) {
         createMatrix();
         changeSizeIcons();
     }
+
     function buttonClearManege() {
         updateMatrix();
         clearField();
     }
+
     function updateMatrix() {
         createMatrix();
     }
-    function clearField(){
+
+    function clearField() {
         canvasField.clearRect(0, 0, canvas.width, canvas.height);
     }
-    function drawMapByMatrix(matrix){
+
+    function drawMapByMatrix(matrix) {
         let canvas = document.getElementById('fieldCanvas');
         let canvasField = canvas.getContext('2d');
 
-        for(let i = 0;i<col;i++)
-            for(let j = 0;j<row;j++)
-                if(matrix[i][j] === 1){
-                    canvasField.fillRect(j*slider.value,i*slider.value,slider.value,slider.value);
+        for (let i = 0; i < col; i++)
+            for (let j = 0; j < row; j++)
+                if (matrix[i][j] === 1) {
+                    canvasField.fillRect(j * slider.value, i * slider.value, slider.value, slider.value);
                 }
     }
 
-    function  changeSizeIcons(){
-        document.getElementById('startImg').style.width  = slider.value + 'px';
+    function changeSizeIcons() {
+        document.getElementById('startImg').style.width = slider.value + 'px';
         document.getElementById('finishImg').style.width = slider.value + 'px';
     }
+
     function createMatrix() {
         row = Math.floor(canvas.width / slider.value);
         col = Math.floor(canvas.height / slider.value);
@@ -102,35 +108,33 @@ function creatArea(aStarSearch) {
     }
 
     canvas.onmousedown = function (event) {
-        // Calculate the block coordinates based on the mouse position and block size
+
         let matrixX = Math.floor(event.offsetX / slider.value);
         let matrixY = Math.floor(event.offsetY / slider.value);
 
-        // Check if the block is already filled
+
         if (matrixA_star[matrixY][matrixX] === 1) {
-            // The block is filled, so delete it
 
-            // Set the fill color to the canvas color
-            canvasField.fillStyle = 'white'; // Replace 'white' with the actual canvas color
 
-            // Clear the block on the canvas
+            canvasField.fillStyle = 'white'; //
+
+
             canvasField.clearRect(matrixX * slider.value, matrixY * slider.value, slider.value, slider.value);
 
-            // Fill the cleared area with the canvas color
+
             canvasField.fillRect(matrixX * slider.value, matrixY * slider.value, slider.value, slider.value);
 
             // Update the matrix
             matrixA_star[matrixY][matrixX] = 0;
         } else {
-            // The block is not filled, so create it
 
-            // Set the fill color to black
-            canvasField.fillStyle = 'black'; // Replace 'black' with the actual block color
 
-            // Draw the block on the canvas
+            canvasField.fillStyle = 'black';
+
+
             canvasField.fillRect(matrixX * slider.value, matrixY * slider.value, slider.value, slider.value);
 
-            // Update the matrix
+
             matrixA_star[matrixY][matrixX] = 1;
         }
 
@@ -229,17 +233,17 @@ function creatArea(aStarSearch) {
 }
 
 
-function managePath(array){
+function managePath(array) {
     let canvas = document.getElementById('fieldCanvas');
     let slider = document.getElementById('slider');
-    let img =  document.createElement('img');
+    let img = document.createElement('img');
     let canvasField = canvas.getContext('2d');
     img.src = 'resources/penguin-svgrepo-com.svg';
     img.style.position = 'absolute';
 
-    img.onload = ()=>{
-        for(let i =0;i<array.length;i++){
-            setTimeout(createPixel(img,array[i][0]*slider.value,array[i][1]*slider.value,canvasField,slider.value),110240100);
+    img.onload = () => {
+        for (let i = 0; i < array.length; i++) {
+            setTimeout(createPixel(img, array[i][0] * slider.value, array[i][1] * slider.value, canvasField, slider.value), 110240100);
 
             //setTimeout(()=>canvasField.fillRect(array[i][0]*slider.value, array[i][1]*slider.value, slider.value, slider.value),1000);
             console.log(array);
@@ -247,6 +251,6 @@ function managePath(array){
     }
 }
 
-function createPixel(img,x,y,field,size,){
-    field.drawImage(img,x,y,size,size);
+function createPixel(img, x, y, field, size,) {
+    field.drawImage(img, x, y, size, size);
 }
