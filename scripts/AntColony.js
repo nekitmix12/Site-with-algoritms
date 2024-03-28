@@ -37,7 +37,7 @@ function antColonyOptimization(matrix, start, targets,
                 let pheromoneLevel = pheromone[currentNode][node];
                 let visibility = 1 / distanceMatrix[currentNode][node];
                 let probability = Math.pow(pheromoneLevel, alpha) * Math.pow(visibility, beta);
-                probabilities.push({ node, probability });
+                probabilities.push({node, probability});
                 totalProbability += probability;
             }
         });
@@ -96,7 +96,7 @@ function antColonyOptimization(matrix, start, targets,
         for (let i = 0; i < matrix.length; i++) {
             distanceMatrix[i] = [];
             for (let j = 0; j < matrix[i].length; j++) {
-                distanceMatrix[i][j] = findPath({ x: i, y: j }, targets, matrix);
+                distanceMatrix[i][j] = findPath({x: i, y: j}, targets, matrix);
             }
         }
         return distanceMatrix;
@@ -104,7 +104,7 @@ function antColonyOptimization(matrix, start, targets,
 
     function findPath(startNode, targets, matrix) {
         let paths = [];
-        let queue = [{ position: startNode, steps: 0, path: [startNode] }];
+        let queue = [{position: startNode, steps: 0, path: [startNode]}];
         let visited = new Set();
         visited.add(`${startNode.x},${startNode.y}`);
 
@@ -116,10 +116,10 @@ function antColonyOptimization(matrix, start, targets,
             }
 
             const neighbors = [
-                { x: current.position.x + 1, y: current.position.y },
-                { x: current.position.x - 1, y: current.position.y },
-                { x: current.position.x, y: current.position.y + 1 },
-                { x: current.position.x, y: current.position.y - 1 }
+                {x: current.position.x + 1, y: current.position.y},
+                {x: current.position.x - 1, y: current.position.y},
+                {x: current.position.x, y: current.position.y + 1},
+                {x: current.position.x, y: current.position.y - 1}
             ];
 
             neighbors.forEach(neighbor => {
@@ -132,7 +132,7 @@ function antColonyOptimization(matrix, start, targets,
                     !visited.has(`${neighbor.x},${neighbor.y}`)
                 ) {
                     visited.add(`${neighbor.x},${neighbor.y}`);
-                    queue.push({ position: neighbor, steps: current.steps + 1, path: [...current.path, neighbor] });
+                    queue.push({position: neighbor, steps: current.steps + 1, path: [...current.path, neighbor]});
                 }
             });
         }
@@ -141,7 +141,7 @@ function antColonyOptimization(matrix, start, targets,
     }
 
     let ants = initializeAnts(numAnts, start);
-    let pheromone = Array.from({ length: numNodes }, () => Array.from({ length: numNodes }, () => 1));
+    let pheromone = Array.from({length: numNodes}, () => Array.from({length: numNodes}, () => 1));
 
     for (let iter = 0; iter < maxIterations; iter++) {
         ants.forEach(ant => {
@@ -179,8 +179,8 @@ let matrix = [
     [0, 1, 1, 1, 0],
     [0, 0, 0, 1, 0]
 ];
-let start = { x: 0, y: 0 };
-let targets = [{ x: 4, y: 4 }, { x: 3, y: 3 }, {x: 1, y: 2}, {x: 4, y: 0}];
+let start = {x: 0, y: 0};
+let targets = [{x: 4, y: 4}, {x: 3, y: 3}, {x: 1, y: 2}, {x: 4, y: 0}];
 
 let paths = antColonyOptimization(matrix, start, targets, numAnts, maxIterations, Q, rho, alpha, beta);
 console.log(paths);

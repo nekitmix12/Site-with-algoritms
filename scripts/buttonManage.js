@@ -1,37 +1,74 @@
-
-
 window.onload=function() {
     let A_starButton = document.getElementById('AStarButton');
     A_starButton.addEventListener('click',()=>{ manageA_star('AStar')});
 }
 let use = false;
 let firstUse = true;
+let buttonContainer = document.createElement('div');
+buttonContainer.style.display = 'flex';
+buttonContainer.style.justifyContent = 'space-between';
+buttonContainer.style.position = 'absolute';
+buttonContainer.style.top = '20%';
+buttonContainer.style.right = '10%';
+buttonContainer.style.width = '15hw';
+
+
 function createButtonStart(functionName){
     let buttonStart = document.createElement('button');
     buttonStart.id = 'startButton';
     buttonStart.value = functionName;
     buttonStart.style.zIndex = '2';
-    buttonStart.style.height='20px';
-    buttonStart.style.width = '50px';
-    buttonStart.style.position='absolute';
+    buttonStart.style.height='40px';
+    buttonStart.style.width = '100px';
+    buttonStart.style.position='static';
     buttonStart.style.top = '20%';
     buttonStart.style.right = '15%';
-    buttonStart.style.backgroundColor = 'red';
-    buttonStart.textContent = 'startButton';
-    document.body.append(buttonStart);
+    buttonStart.style.marginLeft = '20px';
+    buttonStart.style.backgroundColor = '#4CAF50'; // Green
+    buttonStart.style.color = 'white'; // White text
+    buttonStart.style.border = 'none'; // No border
+    buttonStart.style.cursor = 'pointer'; // Cursor changes to hand on hover
+    buttonStart.style.borderRadius = '12px'; // Rounded corners
+    buttonStart.style.fontSize = '18px'; // Larger font size
+    buttonStart.textContent = 'Start';
+    buttonStart.style.background = 'linear-gradient(to right, #ff0000, #ff7f7f)'; // Gradient background
+    buttonStart.style.color = 'white'; // White text
+    buttonStart.style.border = 'none'; // No border
+    buttonStart.style.cursor = 'pointer'; // Cursor changes to hand on hover
+    buttonStart.style.borderRadius = '12px'; // Rounded corners
+    buttonStart.style.fontSize = '20px'; // Increase font size
+    buttonStart.style.padding = '10px 20px'; // Add padding
+    buttonStart.style.transition = 'background 0.3s';
+
+    buttonContainer.append(buttonStart);
 }
 function createButtonClear(){
     let buttonClear = document.createElement('button');
     buttonClear.id = 'clearButton';
     buttonClear.title='Clear';
-    buttonClear.textContent = 'clearButton';
+    buttonClear.textContent = 'Clear';
     buttonClear.style.zIndex = '2';
-    buttonClear.style.height='20px';
-    buttonClear.style.width = '50px';
-    buttonClear.style.position='absolute';
+    buttonClear.style.height='40px';
+    buttonClear.style.width = '100px';
+    buttonClear.style.position='static';
     buttonClear.style.top = '20%';
     buttonClear.style.right = '10%';
-    document.body.append(buttonClear);
+    buttonClear.style.background = 'linear-gradient(to right, #008000, #70db70)'; // Gradient background
+    buttonClear.style.color = 'white'; // White text
+    buttonClear.style.border = 'none'; // No border
+    buttonClear.style.cursor = 'pointer'; // Cursor changes to hand on hover
+    buttonClear.style.borderRadius = '12px'; // Rounded corners
+    buttonClear.style.fontSize = '20px'; // Increase font size
+    buttonClear.style.padding = '10px 20px'; // Add padding
+    buttonClear.style.transition = 'background 0.3s';
+    buttonClear.style.backgroundColor = '#f44336'; // Red
+    buttonClear.style.color = 'white'; // White text
+    buttonClear.style.border = 'none'; // No border
+    buttonClear.style.cursor = 'pointer'; // Cursor changes to hand on hover
+    buttonClear.style.borderRadius = '12px'; // Rounded corners
+    buttonClear.style.fontSize = '18px'; // Larger font size
+    buttonClear.style.marginRight = '10px';
+    buttonContainer.append(buttonClear);
 }
 function createField(){
     let field = document.createElement('canvas');
@@ -39,19 +76,29 @@ function createField(){
     field.style.zIndex = '2';
     field.style.position = 'absolute';
 
-    //значени для изменения размера поля
-    var xOffset = 700;
-    var yOffset = 200; // header height
+    adjustFieldSize(field);
 
-    //200 для того чтоб одинакого хорошо работал и с
-    field.width  = Math.ceil((window.innerWidth  - xOffset)/200)*200;
-    field.height = Math.ceil((window.innerHeight - yOffset)/200)*200;
-    field.style.left='20%   ';
-    field.style.right='20%';
-    field.style.bottom='5%';
-    field.style.top='5%';
     document.body.append(field);
 
+
+    window.addEventListener('resize', function() {
+        adjustFieldSize(field);
+    });
+
+}
+function adjustFieldSize(field) {
+    // Adjust the size of the field to be 75% of the window width
+    field.width = window.innerWidth * 0.7;
+
+    // Adjust the height of the field to fit the window height
+    var yOffset = 200; // header height
+    field.height = Math.ceil((window.innerHeight - yOffset)/200)*200;
+
+    // Align the field with the left side of the screen and leave space on top for the buttons
+    field.style.left = '5%'; // Padding from the left
+    field.style.right = '30%'; // Padding from the right
+    field.style.bottom = '15%'; // Increase padding from the bottom
+    field.style.top = '20%'; // Padding from the top
 }
 function createColor(){
     let colorBolder = document.createElement("input");
@@ -80,7 +127,7 @@ function createSliderSize(){
 function createImgStart(){
     let imgStart = document.createElement('img');
     imgStart.id = 'startImg';
-    imgStart.src = 'img/russia-svgrepo-com.svg'
+    imgStart.src = 'resources/russia-svgrepo-com.svg'
     imgStart.style.width = '10px';
     imgStart.style.position = 'absolute';
     imgStart.style.top = '35%';
@@ -92,7 +139,7 @@ function createImgStart(){
 function createImgFinish(){
     let imgFinish = document.createElement('img');
     imgFinish.id = 'finishImg';
-    imgFinish.src = 'img/china-svgrepo-com.svg'
+    imgFinish.src = 'resources/china-svgrepo-com.svg'
     imgFinish.style.width = '10px';
     imgFinish.style.position = 'absolute';
     imgFinish.style.top = '35%';
@@ -102,28 +149,45 @@ function createImgFinish(){
     document.body.append(imgFinish);
 }
 
-function  createColorTrace(){
+function createColorTrace(){
     let traceColor = document.createElement('input');
     traceColor.type = 'color';
     traceColor.id='traceColor';
-    traceColor.value = '#00a6ff'
+    traceColor.value = '#00a6ff';
     traceColor.style.position = 'absolute';
     traceColor.style.top = '45%';
     traceColor.style.right = '10%';
+    traceColor.style.margin = '10px'; // Add margin
     document.body.append(traceColor);
-
 }
 function createGenerationMapButton(){
     let generationMap = document.createElement('button');
     generationMap.id = 'generationMap';
-    generationMap.style.width = '50px';
-    generationMap.style.height='20px';
-    generationMap.style.backgroundColor =  '#032cc5';
-    generationMap.textContent = 'generationMap';
+    generationMap.style.width = '100px'; // Increase width
+    generationMap.style.height='40px'; // Increase height
+    generationMap.style.background = 'linear-gradient(to right, #032cc5, #4b6cb7)'; // Gradient background
+    generationMap.style.color = 'white'; // White text
+    generationMap.style.border = 'none'; // No border
+    generationMap.style.cursor = 'pointer'; // Cursor changes to hand on hover
+    generationMap.style.borderRadius = '12px'; // Rounded corners
+    generationMap.style.fontSize = '20px'; // Increase font size
+    generationMap.style.padding = '10px 20px'; // Add padding
+    generationMap.style.transition = 'background 0.3s'; // Add transition
+    generationMap.textContent = 'Generate';
+    generationMap.style.textAlign = 'center';
     generationMap.style.position = 'absolute';
     generationMap.style.top = '45%';
     generationMap.style.right = '20%';
+    generationMap.style.margin = '10px'; // Add margin
     document.body.append(generationMap);
+
+    // Add hover effect
+    generationMap.onmouseover = function() {
+        this.style.background = 'linear-gradient(to right, #4b6cb7, #032cc5)'; // Change gradient direction
+    }
+    generationMap.onmouseout = function() {
+        this.style.background = 'linear-gradient(to right, #032cc5, #4b6cb7)'; // Restore original gradient direction
+    }
 }
 function deleteColorTrace(){
     document.getElementById('traceColor').remove();
@@ -162,6 +226,8 @@ function createVisualizationA_star(functionName){
     createField();
     createButtonClear();
     createButtonStart(functionName);
+
+    document.body.append(buttonContainer);
     createSliderSize();
     createImgFinish();
     createImgStart();
@@ -171,6 +237,7 @@ function createVisualizationA_star(functionName){
 
 
     creatArea();
+
 
     use = 1;
 }

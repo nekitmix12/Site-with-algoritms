@@ -3,7 +3,7 @@ let startCoordinate = [];
 let finishCoordinate = [];
 let row;
 let col;
-
+let sliderValue;
 function creatArea(aStarSearch) {
     let canvas = document.getElementById('fieldCanvas');
     let buttonClear = document.getElementById('clearButton');
@@ -21,7 +21,7 @@ function creatArea(aStarSearch) {
 
 
 
-    slider.addEventListener('input', sliderManege);
+    slider.addEventListener('input', sliderManage);
     buttonClear.addEventListener("click", buttonClearManege);
     borderGeneration.addEventListener('click',borderGenerationManege);
 
@@ -31,10 +31,11 @@ function creatArea(aStarSearch) {
     function borderGenerationManege(){
         clearField();
         updateMatrix();
-        matrixA_star = generateMaze(row,col,0.6);
+        matrixA_star = generateMaze(0.6);
         drawMapByMatrix(matrixA_star);
     }
-    function sliderManege() {
+    function sliderManage() {
+        sliderValue = slider.value;
         clearField();
         updateMatrix();
         createMatrix();
@@ -66,8 +67,12 @@ function creatArea(aStarSearch) {
         document.getElementById('finishImg').style.width = slider.value + 'px';
     }
     function createMatrix() {
-        row = Math.ceil(canvas.width / slider.value);
-        col = Math.ceil(canvas.height / slider.value);
+        row = Math.floor(canvas.width / slider.value);
+        col = Math.floor(canvas.height / slider.value);
+
+        // Adjust the canvas size to fit the squares
+        canvas.width = row * slider.value;
+        canvas.height = col * slider.value;
 
         matrixA_star = new Array(col);
         for (let i = 0; i < col; i++) {
@@ -76,7 +81,6 @@ function creatArea(aStarSearch) {
                 matrixA_star[i][j] = 0;
             }
         }
-
     }
 
     function createBlock(event) {
@@ -98,8 +102,38 @@ function creatArea(aStarSearch) {
     }
 
     canvas.onmousedown = function (event) {
+        // Calculate the block coordinates based on the mouse position and block size
+        let matrixX = Math.floor(event.offsetX / slider.value);
+        let matrixY = Math.floor(event.offsetY / slider.value);
 
-        createBlock(event);
+        // Check if the block is already filled
+        if (matrixA_star[matrixY][matrixX] === 1) {
+            // The block is filled, so delete it
+
+            // Set the fill color to the canvas color
+            canvasField.fillStyle = 'white'; // Replace 'white' with the actual canvas color
+
+            // Clear the block on the canvas
+            canvasField.clearRect(matrixX * slider.value, matrixY * slider.value, slider.value, slider.value);
+
+            // Fill the cleared area with the canvas color
+            canvasField.fillRect(matrixX * slider.value, matrixY * slider.value, slider.value, slider.value);
+
+            // Update the matrix
+            matrixA_star[matrixY][matrixX] = 0;
+        } else {
+            // The block is not filled, so create it
+
+            // Set the fill color to black
+            canvasField.fillStyle = 'black'; // Replace 'black' with the actual block color
+
+            // Draw the block on the canvas
+            canvasField.fillRect(matrixX * slider.value, matrixY * slider.value, slider.value, slider.value);
+
+            // Update the matrix
+            matrixA_star[matrixY][matrixX] = 1;
+        }
+
         canvas.onmousemove = function (event) {
             createBlock(event);
         }
@@ -200,15 +234,15 @@ function managePath(array){
     let slider = document.getElementById('slider');
     let img =  document.createElement('img');
     let canvasField = canvas.getContext('2d');
-    img.src = 'img/penguin-svgrepo-com.svg';
+    img.src = 'resources/penguin-svgrepo-com.svg';
     img.style.position = 'absolute';
 
     img.onload = ()=>{
         for(let i =0;i<array.length;i++){
-        setTimeout(createPixel(img,array[i][0]*slider.value,array[i][1]*slider.value,canvasField,slider.value),110240100);
+            setTimeout(createPixel(img,array[i][0]*slider.value,array[i][1]*slider.value,canvasField,slider.value),110240100);
 
-        //setTimeout(()=>canvasField.fillRect(array[i][0]*slider.value, array[i][1]*slider.value, slider.value, slider.value),1000);
-        console.log(array);
+            //setTimeout(()=>canvasField.fillRect(array[i][0]*slider.value, array[i][1]*slider.value, slider.value, slider.value),1000);
+            console.log(array);
         }
     }
 }
@@ -216,5 +250,3 @@ function managePath(array){
 function createPixel(img,x,y,field,size,){
     field.drawImage(img,x,y,size,size);
 }
-
-
