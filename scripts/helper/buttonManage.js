@@ -3,6 +3,16 @@ window.onload = function () {
     A_starButton.addEventListener('click', () => {
         manageA_star('AStar')
     });
+    document.getElementById('clusterButton').addEventListener('click', function() {
+        // Ensure canvas, data, and k are defined and accessible
+        let canvas = document.getElementById('canvas'); // Replace 'canvas' with the actual id of your canvas element
+        let data = []; // Replace with your actual data
+        let k = 3; // Replace with the actual number of clusters you want
+
+        let kmeans = new KMeans(canvas, data, k);
+        kmeans.run();
+        kmeans.draw();
+    });
 }
 let use = false;
 let firstUse = true;
