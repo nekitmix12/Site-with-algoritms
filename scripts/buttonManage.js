@@ -1,74 +1,40 @@
+
 window.onload=function() {
     let A_starButton = document.getElementById('AStarButton');
-    A_starButton.addEventListener('click',()=>{ manageA_star('AStar')});
+    A_starButton.addEventListener('click',()=>{ manage('AStar')});
+    let antButton = document.getElementById('antButton');
+    antButton.addEventListener('click',()=>{ manage('ant')});
 }
 let use = false;
-let firstUse = true;
-let buttonContainer = document.createElement('div');
-buttonContainer.style.display = 'flex';
-buttonContainer.style.justifyContent = 'space-between';
-buttonContainer.style.position = 'absolute';
-buttonContainer.style.top = '20%';
-buttonContainer.style.right = '10%';
-buttonContainer.style.width = '15hw';
-
-
+let firstClick = true;
+let lastFunction;
+let lastId;
 function createButtonStart(functionName){
     let buttonStart = document.createElement('button');
     buttonStart.id = 'startButton';
     buttonStart.value = functionName;
     buttonStart.style.zIndex = '2';
-    buttonStart.style.height='40px';
-    buttonStart.style.width = '100px';
-    buttonStart.style.position='static';
+    buttonStart.style.height='20px';
+    buttonStart.style.width = '50px';
+    buttonStart.style.position='absolute';
     buttonStart.style.top = '20%';
     buttonStart.style.right = '15%';
-    buttonStart.style.marginLeft = '20px';
-    buttonStart.style.backgroundColor = '#4CAF50'; // Green
-    buttonStart.style.color = 'white'; // White text
-    buttonStart.style.border = 'none'; // No border
-    buttonStart.style.cursor = 'pointer'; // Cursor changes to hand on hover
-    buttonStart.style.borderRadius = '12px'; // Rounded corners
-    buttonStart.style.fontSize = '18px'; // Larger font size
-    buttonStart.textContent = 'Start';
-    buttonStart.style.background = 'linear-gradient(to right, #ff0000, #ff7f7f)'; // Gradient background
-    buttonStart.style.color = 'white'; // White text
-    buttonStart.style.border = 'none'; // No border
-    buttonStart.style.cursor = 'pointer'; // Cursor changes to hand on hover
-    buttonStart.style.borderRadius = '12px'; // Rounded corners
-    buttonStart.style.fontSize = '20px'; // Increase font size
-    buttonStart.style.padding = '10px 20px'; // Add padding
-    buttonStart.style.transition = 'background 0.3s';
-
-    buttonContainer.append(buttonStart);
+    buttonStart.style.backgroundColor = 'red';
+    buttonStart.textContent = 'startButton';
+    document.body.append(buttonStart);
 }
 function createButtonClear(){
     let buttonClear = document.createElement('button');
     buttonClear.id = 'clearButton';
     buttonClear.title='Clear';
-    buttonClear.textContent = 'Clear';
+    buttonClear.textContent = 'clearButton';
     buttonClear.style.zIndex = '2';
-    buttonClear.style.height='40px';
-    buttonClear.style.width = '100px';
-    buttonClear.style.position='static';
+    buttonClear.style.height='20px';
+    buttonClear.style.width = '50px';
+    buttonClear.style.position='absolute';
     buttonClear.style.top = '20%';
     buttonClear.style.right = '10%';
-    buttonClear.style.background = 'linear-gradient(to right, #008000, #70db70)'; // Gradient background
-    buttonClear.style.color = 'white'; // White text
-    buttonClear.style.border = 'none'; // No border
-    buttonClear.style.cursor = 'pointer'; // Cursor changes to hand on hover
-    buttonClear.style.borderRadius = '12px'; // Rounded corners
-    buttonClear.style.fontSize = '20px'; // Increase font size
-    buttonClear.style.padding = '10px 20px'; // Add padding
-    buttonClear.style.transition = 'background 0.3s';
-    buttonClear.style.backgroundColor = '#f44336'; // Red
-    buttonClear.style.color = 'white'; // White text
-    buttonClear.style.border = 'none'; // No border
-    buttonClear.style.cursor = 'pointer'; // Cursor changes to hand on hover
-    buttonClear.style.borderRadius = '12px'; // Rounded corners
-    buttonClear.style.fontSize = '18px'; // Larger font size
-    buttonClear.style.marginRight = '10px';
-    buttonContainer.append(buttonClear);
+    document.body.append(buttonClear);
 }
 function createField(){
     let field = document.createElement('canvas');
@@ -76,29 +42,19 @@ function createField(){
     field.style.zIndex = '2';
     field.style.position = 'absolute';
 
-    adjustFieldSize(field);
+    //значени для изменения размера поля
+    let xOffset = 600;
+    let yOffset = 100;// header height
 
+    //200 для того чтоб одинакого хорошо работал и с
+    field.width  = Math.ceil((window.innerWidth  - xOffset)/10)*10;
+    field.height = Math.ceil((window.innerHeight - yOffset)/10)*10;
+    field.style.left='20%   ';
+    field.style.right='20%';
+    field.style.bottom='5%';
+    field.style.top='5%';
     document.body.append(field);
 
-
-    window.addEventListener('resize', function() {
-        adjustFieldSize(field);
-    });
-
-}
-function adjustFieldSize(field) {
-    // Adjust the size of the field to be 75% of the window width
-    field.width = window.innerWidth * 0.7;
-
-    // Adjust the height of the field to fit the window height
-    var yOffset = 200; // header height
-    field.height = Math.ceil((window.innerHeight - yOffset)/200)*200;
-
-    // Align the field with the left side of the screen and leave space on top for the buttons
-    field.style.left = '5%'; // Padding from the left
-    field.style.right = '30%'; // Padding from the right
-    field.style.bottom = '15%'; // Increase padding from the bottom
-    field.style.top = '20%'; // Padding from the top
 }
 function createColor(){
     let colorBolder = document.createElement("input");
@@ -107,7 +63,7 @@ function createColor(){
     colorBolder.style.position='absolute';
     colorBolder.style.right = '10%';
     colorBolder.style.top= '25%';
-    colorBolder.value = '#f8d703';
+    colorBolder.value = '#173cd0';
     document.body.append(colorBolder);
 }
 function createSliderSize(){
@@ -149,45 +105,46 @@ function createImgFinish(){
     document.body.append(imgFinish);
 }
 
-function createColorTrace(){
+function  createColorBorder(){
+    let borderColor = document.createElement('input');
+    borderColor.type = 'color';
+    borderColor.id='borderColor';
+    borderColor.value = '#000000'
+    borderColor.style.position = 'absolute';
+    borderColor.style.top = '55%';
+    borderColor.style.right = '10%';
+    document.body.append(borderColor);
+}
+function  createColorTrace(){
     let traceColor = document.createElement('input');
     traceColor.type = 'color';
     traceColor.id='traceColor';
-    traceColor.value = '#00a6ff';
+    traceColor.value = '#00a6ff'
     traceColor.style.position = 'absolute';
     traceColor.style.top = '45%';
     traceColor.style.right = '10%';
-    traceColor.style.margin = '10px'; // Add margin
     document.body.append(traceColor);
+
 }
 function createGenerationMapButton(){
     let generationMap = document.createElement('button');
     generationMap.id = 'generationMap';
-    generationMap.style.width = '100px'; // Increase width
-    generationMap.style.height='40px'; // Increase height
-    generationMap.style.background = 'linear-gradient(to right, #032cc5, #4b6cb7)'; // Gradient background
-    generationMap.style.color = 'white'; // White text
-    generationMap.style.border = 'none'; // No border
-    generationMap.style.cursor = 'pointer'; // Cursor changes to hand on hover
-    generationMap.style.borderRadius = '12px'; // Rounded corners
-    generationMap.style.fontSize = '20px'; // Increase font size
-    generationMap.style.padding = '10px 20px'; // Add padding
-    generationMap.style.transition = 'background 0.3s'; // Add transition
-    generationMap.textContent = 'Generate';
-    generationMap.style.textAlign = 'center';
+    generationMap.style.width = '50px';
+    generationMap.style.height='20px';
+    generationMap.style.backgroundColor =  '#032cc5';
+    generationMap.textContent = 'generationMap';
     generationMap.style.position = 'absolute';
     generationMap.style.top = '45%';
     generationMap.style.right = '20%';
-    generationMap.style.margin = '10px'; // Add margin
     document.body.append(generationMap);
+}
 
-    // Add hover effect
-    generationMap.onmouseover = function() {
-        this.style.background = 'linear-gradient(to right, #4b6cb7, #032cc5)'; // Change gradient direction
-    }
-    generationMap.onmouseout = function() {
-        this.style.background = 'linear-gradient(to right, #032cc5, #4b6cb7)'; // Restore original gradient direction
-    }
+function createTower(){
+    let tower = document.createElement('img');
+
+}
+function deleteColorBorder(){
+    document.getElementById('borderColor').remove();
 }
 function deleteColorTrace(){
     document.getElementById('traceColor').remove();
@@ -226,20 +183,17 @@ function createVisualizationA_star(functionName){
     createField();
     createButtonClear();
     createButtonStart(functionName);
-
-    document.body.append(buttonContainer);
     createSliderSize();
     createImgFinish();
     createImgStart();
     createColor();
     createGenerationMapButton();
     createColorTrace();
+    createColorBorder();
 
+    creatArea(functionName);
 
-    creatArea();
-
-
-    use = 1;
+    use = true;
 }
 
 function returnCoordinate(){
@@ -258,43 +212,73 @@ function deleteVisualizationA_star(){
     returnCoordinate();
     deleteColorTrace();
     deleteGenerationMapButton();
-    use = 0;
+    deleteColorBorder();
+
 }
 
-function manageA_star(functionName){
-    if (!use && firstUse) {
-        createVisualizationA_star(functionName);
-        document.getElementById('startButton').addEventListener("click",()=>
-        {
-            clearField();
-            drawMapByMatrix(matrixA_star);
-            launch(document.getElementById('startButton').value)
-        });
-        firstUse = false;
-    } else if (!use && !firstUse){
-        deleteVisualizationA_star();
-        createVisualizationA_star();
-    }else{
-        deleteVisualizationA_star();
-        firstUse = true;
+function createVisualizationAnt(functionName){
+    createField();
+    createButtonClear();
+    createButtonStart(functionName);
+    createSliderSize();
+    createColorTrace();
+
+    creatArea(functionName);
+}
+function deleteVisualizationAnt(){
+    deleteField();
+    deleteButtonClear();
+    deleteButtonStart();
+    deleteSliderSize();
+    returnCoordinate();
+    deleteColorTrace();
+
+}
+function manage(functionName){
+    if (!use ) {
+        switch (functionName) {
+            case ('AStar'):
+                createVisualizationA_star(functionName);
+
+
+                lastFunction = deleteVisualizationA_star;
+                break;
+            case ('ant'):
+                createVisualizationAnt(functionName);
+                lastFunction = deleteVisualizationAnt;
+
+        }
+        use = true;
+        lastId = functionName;
+        console.log(lastFunction + ' ' + use + ' ' + lastId + ';')
+    } else if (use && lastId===functionName){
+        lastFunction();
+        use = false;
+        lastId = undefined;
+
+        console.log(lastFunction + ' ' + use + ' ' + lastId + ';')
+    }else if (use && lastId!==functionName){
+
+        lastFunction();
+
+        switch (functionName) {
+            case ('AStar'):
+                createVisualizationA_star(functionName);
+
+                lastFunction = deleteVisualizationA_star;
+                break
+            case ('ant'):
+                createVisualizationAnt(functionName);
+                lastFunction = deleteVisualizationAnt;
+                break;
+        }
+        lastId = functionName;
+        console.log(lastFunction + ' ' + use + ' ' + lastId + ';')
     }
-}
-function drawMapByMatrix(matrix){
-    let canvas = document.getElementById('fieldCanvas');
-    let canvasField = canvas.getContext('2d');
-    let slider = document.getElementById('slider');
-    for(let i = 0;i<col;i++)
-        for(let j = 0;j<row;j++)
-            if(matrix[i][j] === 1){
-                canvasField.fillRect(j*slider.value,i*slider.value,slider.value,slider.value);
-            }
+
 }
 
-function clearField(){
-    let canvas = document.getElementById('fieldCanvas');
-    let canvasField = canvas.getContext('2d');
-    canvasField.clearRect(0, 0, canvas.width, canvas.height);
-}
+
 
 function launch(functionName){
     switch (functionName){
@@ -304,20 +288,39 @@ function launch(functionName){
             else if(startCoordinate[0] === undefined)
                 alert('Вы не установили старт');
             else if(finishCoordinate[0] === undefined)
-                alert('Вы не установили финиш');
+                alert('Вы не установили финиш'+ finishCoordinate[0]);
             else if (startCoordinate[0]>row-1 || startCoordinate[1]>col-1||startCoordinate[0]<0
                 || startCoordinate[1]<0)
-                alert('установите старт на поле' +col + ' : ' + row);
+                alert('установите старт на поле' );
 
             else if(finishCoordinate[0]>row-1 || finishCoordinate[1]>col-1||finishCoordinate[0]<0
                 || finishCoordinate[1]<0)
                 alert('установите финиш на поле');
             else {
                 let result = aStarSearch(matrixA_star, [startCoordinate[1],startCoordinate[0]], [finishCoordinate[1],finishCoordinate[0]]);
-                console.log(matrixA_star);
-                console.log(result);
-                managePath(result);
+                if(result[0][0]              !==startCoordinate [0]
+                || result[0][1]              !==startCoordinate [1]
+                || result[result.length-1][0]!==finishCoordinate[0]
+                || result[result.length-1][1]!==finishCoordinate[1])
+                    alert("незля простороить путь");
+                else managePath(result);
+
             }
+            break;
+        case('ant'):
+
+            if(points.length ===0)
+                alert('Добавьте города');
+            else if (points.length ===1)
+                alert('Вы добавили слишком мало городов');
+            else {
+                const {bestPath, shortestDistance} = antColonyOptimization(points, 5, 100, 1, 0.5, 100);
+                let array = bestPath.map(index => points[index]);
+                console.log("Shortest Path:", array);
+                console.log("Shortest Distance:", shortestDistance);
+                createPath(array);
+            }
+            break;
 
     }
 }

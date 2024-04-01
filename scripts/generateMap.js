@@ -6,13 +6,9 @@
  стартовая точка генерации лабиринта выбирается рандомно
  Аргументы: width, height - ширина и длина карты, freeRatio - отношение свободных/всех клеток. */
 
-function generateMaze(freeRatio) {
-    const width = Math.floor(window.innerWidth * 0.75 );
-    const height = Math.floor(window.innerHeight * 0.75 - 200);
-
-    const maze = Array.from({length: height}, () =>
-        Array.from({length: width}, () => 1));
-
+function generateMaze(width, height, freeRatio) {
+    const maze = Array.from({ length: height }, () =>
+        Array.from({ length: width }, () => 1));
 
     const walls = [];
     const addWalls = (x, y) => {
@@ -54,10 +50,3 @@ function generateMaze(freeRatio) {
     return maze;
 }
 
-// Пример использования
-const width = 5;
-const height = 5;
-const freeRatio = 0.6; // 40% свободных клеток
-const maze = generateMaze(width, height, freeRatio);
-
-maze.forEach(row => console.log(row.join(' ')));
