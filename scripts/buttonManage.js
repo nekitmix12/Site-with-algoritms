@@ -6,7 +6,6 @@ window.onload=function() {
     antButton.addEventListener('click',()=>{ manage('ant')});
 }
 let use = false;
-let firstClick = true;
 let lastFunction;
 let lastId;
 function createButtonStart(functionName){
@@ -56,9 +55,9 @@ function createField(){
     document.body.append(field);
 
 }
-function createColor(){
+function createColorUser(){
     let colorBolder = document.createElement("input");
-    colorBolder.id='colorBolder';
+    colorBolder.id='colorUser';
     colorBolder.type='color';
     colorBolder.style.position='absolute';
     colorBolder.style.right = '10%';
@@ -119,7 +118,7 @@ function  createColorTrace(){
     let traceColor = document.createElement('input');
     traceColor.type = 'color';
     traceColor.id='traceColor';
-    traceColor.value = '#00a6ff'
+    traceColor.value = '#08b6b0'
     traceColor.style.position = 'absolute';
     traceColor.style.top = '45%';
     traceColor.style.right = '10%';
@@ -175,7 +174,7 @@ function deleteImgFinish(){
 function deleteImgStart(){
     document.getElementById('startImg').remove();
 }
-function  deleteColor(){
+function  deleteColorUser(){
     document.getElementById('colorBolder').remove();
 }
 
@@ -186,8 +185,8 @@ function createVisualizationA_star(functionName){
     createSliderSize();
     createImgFinish();
     createImgStart();
-    createColor();
     createGenerationMapButton();
+    createColorUser();
     createColorTrace();
     createColorBorder();
 
@@ -208,7 +207,7 @@ function deleteVisualizationA_star(){
     deleteSliderSize();
     deleteImgStart();
     deleteImgFinish();
-    deleteColor();
+    deleteColorUser();
     returnCoordinate();
     deleteColorTrace();
     deleteGenerationMapButton();
