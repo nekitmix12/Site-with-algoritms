@@ -36,11 +36,17 @@ function creatArea(functionName) {
             canvasField = canvas.getContext('2d');
 
             borderColor.addEventListener('input',changeColorBorder);
+
+            borderColor.addEventListener('input',()=>
+                matrixUpdate(canvas,canvasField,slider,borderColor.value));
+
             traceColor.addEventListener('input',changeTraceColor);
+
             colorUser.addEventListener('input',changeColorUser);
 
+
             startButton.addEventListener("click", () => {
-                manageStartAStar(canvasField,canvas,slider,borderColor);});
+                manageStartAStar(canvasField,canvas,slider,borderColor.value);});
 
             slider.addEventListener('input', ()=>{
                 sliderManegeAStar(slider,canvasField,canvas,imgFinish,imgStart)});
@@ -75,14 +81,15 @@ function creatArea(functionName) {
             buttonClear = document.getElementById('clearButton');
             startButton = document.getElementById('startButton');
             slider = document.getElementById('slider');
-            borderColor = document.getElementById('traceColor');
+            colorUser = document.getElementById('colorUser');
+            traceColor = document.getElementById('traceColor');
             canvasField = canvas.getContext('2d');
 
-            borderColor.addEventListener('input',()=> {
-                borderColor = this.value;}) ;
-
+            traceColor.addEventListener('input',()=> {
+                traceColor = this.value;}) ;
+            console.log(traceColor.value);
             startButton.addEventListener("click", () => {
-                manageStartAnt(canvas,canvasField,slider,borderColor);});
+                manageStartAnt(canvas,canvasField,slider,colorUser.value);});
 
             slider.addEventListener('input', ()=>{
                 sliderManegeAnt(slider,canvasField,canvas)});
@@ -93,15 +100,13 @@ function creatArea(functionName) {
             createMatrix(canvas,slider);
 
             canvas.addEventListener('mousedown',(event)=>
-                draw(event,canvas,canvasField,slider,colorUser));
+                draw(event,canvas,canvasField,slider,colorUser.value));
 
     }
 
 
     function changeColorBorder() {
-        //console.log(borderColor.value);
         borderColor.value = this.value;
-        matrixUpdate(canvas,canvasField,slider,borderColor);
     }
 
     function changeColorUser() {
@@ -117,8 +122,9 @@ function creatArea(functionName) {
 }
 
 
-function manageStartAStar(canvasField,canvas,slider,borderColor){
-    matrixUpdate(canvas,canvasField,slider,borderColor);
+function manageStartAStar(canvasField,canvas,slider,color){
+    matrixUpdate(canvas,canvasField,slider,color);
+    console.log(color);
     launch(document.getElementById('startButton').value)
 }
 function getCountPoint(){
@@ -148,18 +154,19 @@ function getPoint(){
             }
     console.log(points);
 }
-function manageStartAnt(canvas,canvasField,slider,borderColor){
-    matrixUpdate(canvas,canvasField,slider,borderColor);
+function manageStartAnt(canvas,canvasField,slider,color){
+    matrixUpdate(canvas,canvasField,slider,color);
     getPoint();
-    console.log(document.getElementById('startButton').value);
+    console.log(color);
     launch(document.getElementById('startButton').value)
 }
-function matrixUpdate(canvas,canvasField,slider,borderColor){
+function matrixUpdate(canvas,canvasField,slider,color){
     clearField(canvasField,canvas);
-    drawMapByMatrix(matrixA_star,canvas,canvasField,slider,borderColor);
+    console.log(color);
+    drawMapByMatrix(matrixA_star,canvas,canvasField,slider,color);
 }
-function drawMapByMatrix(matrix,canvas,canvasField,slider,borderColor){
-    canvasField.fillStyle = borderColor.value;
+function drawMapByMatrix(matrix,canvas,canvasField,slider,color){
+    canvasField.fillStyle = color;
     for(let i = 0;i<col;i++)
         for(let j = 0;j<row;j++)
             if(matrix[i][j] === 1){
@@ -234,9 +241,11 @@ function createPath(array){
     let canvas = document.getElementById('fieldCanvas');
     let canvasField = canvas.getContext('2d');
     let slider = document.getElementById('slider');
+    let traceColor = document.getElementById('traceColor');
     console.log(array.length);
 
     canvasField.beginPath();
+    canvasField.strokeStyle = traceColor.value;
     canvasField.lineCap = 'round';
     canvasField.lineWidth = slider.value/2;
     canvasField.moveTo(array[0][0]*slider.value + slider.value/2, array[0][1]*slider.value + slider.value/2);

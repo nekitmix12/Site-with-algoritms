@@ -175,7 +175,7 @@ function deleteImgStart(){
     document.getElementById('startImg').remove();
 }
 function  deleteColorUser(){
-    document.getElementById('colorBolder').remove();
+    document.getElementById('colorUser').remove();
 }
 
 function createVisualizationA_star(functionName){
@@ -207,10 +207,10 @@ function deleteVisualizationA_star(){
     deleteSliderSize();
     deleteImgStart();
     deleteImgFinish();
-    deleteColorUser();
+    deleteGenerationMapButton();
     returnCoordinate();
     deleteColorTrace();
-    deleteGenerationMapButton();
+    deleteColorUser();
     deleteColorBorder();
 
 }
@@ -221,7 +221,7 @@ function createVisualizationAnt(functionName){
     createButtonStart(functionName);
     createSliderSize();
     createColorTrace();
-
+    createColorUser();
     creatArea(functionName);
 }
 function deleteVisualizationAnt(){
@@ -231,6 +231,7 @@ function deleteVisualizationAnt(){
     deleteSliderSize();
     returnCoordinate();
     deleteColorTrace();
+    deleteColorUser();
 
 }
 function manage(functionName){
