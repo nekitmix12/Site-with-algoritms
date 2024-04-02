@@ -17,26 +17,36 @@ function creatArea(functionName) {
     let borderColor;
     let borderGeneration;
     let canvasField;
-
+    let traceColor;
+    let colorUser;
+    console.log('do');
     switch (functionName){
         case ('AStar'):
+
             canvas = document.getElementById('fieldCanvas');
             buttonClear = document.getElementById('clearButton');
             startButton = document.getElementById('startButton');
             imgStart = document.getElementById('startImg');
             imgFinish = document.getElementById('finishImg');
             slider = document.getElementById('slider');
-            borderColor = document.getElementById('colorBolder');
+            borderColor = document.getElementById('borderColor');
+            traceColor = document.getElementById('traceColor');
+            colorUser = document.getElementById('colorUser');
             borderGeneration = document.getElementById('generationMap');
             canvasField = canvas.getContext('2d');
-            borderColor = borderColor.value;
 
-            document.getElementById('colorBolder').oninput = function () {
-                borderColor = this.value;
-            }
+            borderColor.addEventListener('input',changeColorBorder);
+
+            borderColor.addEventListener('input',()=>
+                matrixUpdate(canvas,canvasField,slider,borderColor.value));
+
+            traceColor.addEventListener('input',changeTraceColor);
+
+            colorUser.addEventListener('input',changeColorUser);
+
 
             startButton.addEventListener("click", () => {
-                manageStartAStar(canvasField,canvas,slider,borderColor);});
+                manageStartAStar(canvasField,canvas,slider,borderColor.value);});
 
             slider.addEventListener('input', ()=>{
                 sliderManegeAStar(slider,canvasField,canvas,imgFinish,imgStart)});
@@ -45,10 +55,10 @@ function creatArea(functionName) {
                 buttonClearManege(canvas,slider,canvasField)});
 
             borderGeneration.addEventListener('click', ()=>{
-                borderGenerationManege(canvas,slider,canvasField,borderColor)});
+                borderGenerationManege(canvas,slider,canvasField,borderColor.value)});
 
             canvas.addEventListener('mousedown',(event)=>
-                draw(event,canvas,canvasField,slider,borderColor));
+                draw(event,canvas,canvasField,slider,colorUser.value));
 
             createMatrix(canvas,slider);
 
@@ -71,14 +81,15 @@ function creatArea(functionName) {
             buttonClear = document.getElementById('clearButton');
             startButton = document.getElementById('startButton');
             slider = document.getElementById('slider');
-            borderColor = document.getElementById('traceColor');
+            colorUser = document.getElementById('colorUser');
+            traceColor = document.getElementById('traceColor');
             canvasField = canvas.getContext('2d');
 
-            borderColor.addEventListener('input',()=> {
-                borderColor = this.value;}) ;
-
+            traceColor.addEventListener('input',()=> {
+                traceColor = this.value;}) ;
+            console.log(traceColor.value);
             startButton.addEventListener("click", () => {
-                manageStartAnt(canvas,canvasField,slider,borderColor);});
+                manageStartAnt(canvas,canvasField,slider,colorUser.value);});
 
             slider.addEventListener('input', ()=>{
                 sliderManegeAnt(slider,canvasField,canvas)});
@@ -89,13 +100,31 @@ function creatArea(functionName) {
             createMatrix(canvas,slider);
 
             canvas.addEventListener('mousedown',(event)=>
-                draw(event,canvas,canvasField,slider,borderColor));
+                draw(event,canvas,canvasField,slider,colorUser.value));
 
     }
 
+
+    function changeColorBorder() {
+        borderColor.value = this.value;
+    }
+
+    function changeColorUser() {
+        console.log(colorUser.value);
+        colorUser.value = this.value;
+    }
+    function changeTraceColor() {
+        //console.log(traceColor.value);
+        traceColor.value = this.value;
+    }
+
+
 }
-function manageStartAStar(canvasField,canvas,slider,borderColor){
-    matrixUpdate(canvas,canvasField,slider,borderColor);
+
+
+function manageStartAStar(canvasField,canvas,slider,color){
+    matrixUpdate(canvas,canvasField,slider,color);
+    console.log(color);
     launch(document.getElementById('startButton').value)
 }
 function getCountPoint(){
@@ -125,18 +154,19 @@ function getPoint(){
             }
     console.log(points);
 }
-function manageStartAnt(canvas,canvasField,slider,borderColor){
-    matrixUpdate(canvas,canvasField,slider,borderColor);
+function manageStartAnt(canvas,canvasField,slider,color){
+    matrixUpdate(canvas,canvasField,slider,color);
     getPoint();
-    console.log(document.getElementById('startButton').value);
+    console.log(color);
     launch(document.getElementById('startButton').value)
 }
-function matrixUpdate(canvas,canvasField,slider,borderColor){
+function matrixUpdate(canvas,canvasField,slider,color){
     clearField(canvasField,canvas);
-    drawMapByMatrix(matrixA_star,canvas,canvasField,slider,borderColor);
+    console.log(color);
+    drawMapByMatrix(matrixA_star,canvas,canvasField,slider,color);
 }
-function drawMapByMatrix(matrix,canvas,canvasField,slider,borderColor){
-    canvasField.fillStyle = borderColor.value;
+function drawMapByMatrix(matrix,canvas,canvasField,slider,color){
+    canvasField.fillStyle = color;
     for(let i = 0;i<col;i++)
         for(let j = 0;j<row;j++)
             if(matrix[i][j] === 1){
@@ -144,11 +174,11 @@ function drawMapByMatrix(matrix,canvas,canvasField,slider,borderColor){
             }
 }
 
-function borderGenerationManege(canvas,slider,canvasField,borderColor){
+function borderGenerationManege(canvas,slider,canvasField,userColor){
     clearField(canvasField,canvas);
     updateMatrix(canvas,slider);
     matrixA_star = generateMaze(row,col,0.6);
-    drawMapByMatrix(matrixA_star,canvas,canvasField,slider,borderColor);
+    drawMapByMatrix(matrixA_star,canvas,canvasField,slider,userColor);
 }
 function sliderManegeAStar(slider,canvasField,canvas,imgFinish,imgStart) {
     changeField(slider);
@@ -176,10 +206,11 @@ function updateMatrix(canvas,slider) {
 function clearField(canvasField,canvas){
     canvasField.clearRect(0, 0, canvas.width, canvas.height);
 }
-function draw(event,canvas,canvasField,slider,borderColor){
-    createBlock(event,canvasField,slider,borderColor);
+function draw(event,canvas,canvasField,slider,userColor){
+
+    createBlock(event,canvasField,slider,userColor);
     canvas.onmousemove = function (event) {
-        createBlock(event,canvasField,slider,borderColor);
+        createBlock(event,canvasField,slider,userColor);
     }
     canvas.onmouseup = function () {
         canvas.onmousemove = null;
@@ -210,9 +241,11 @@ function createPath(array){
     let canvas = document.getElementById('fieldCanvas');
     let canvasField = canvas.getContext('2d');
     let slider = document.getElementById('slider');
+    let traceColor = document.getElementById('traceColor');
     console.log(array.length);
 
     canvasField.beginPath();
+    canvasField.strokeStyle = traceColor.value;
     canvasField.lineCap = 'round';
     canvasField.lineWidth = slider.value/2;
     canvasField.moveTo(array[0][0]*slider.value + slider.value/2, array[0][1]*slider.value + slider.value/2);
@@ -281,14 +314,14 @@ function changeField(slider){
     field.width  = Math.ceil((window.innerWidth  - xOffset)/slider.value)*slider.value;
     field.height = Math.ceil((window.innerHeight - yOffset)/slider.value)*slider.value;
 }
-function createBlock(event,canvasField,slider,borderColor) {
+function createBlock(event,canvasField,slider,colorUser) {
     let matrixX = Math.floor(event.offsetX / slider.value);
     let matrixY = Math.floor(event.offsetY / slider.value);
 
     let correctX = matrixX * slider.value;
     let correctY = matrixY * slider.value;
 
-    canvasField.fillStyle = borderColor;
+    canvasField.fillStyle = colorUser;
     canvasField.fillRect(correctX, correctY, slider.value, slider.value);
 
     matrixA_star[matrixY][matrixX] = 1;
