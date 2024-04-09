@@ -1,23 +1,24 @@
-// Когда страница загружена, добавляем обработчики событий для кнопок
-window.onload = function () {
+window.onload=function() {
     let A_starButton = document.getElementById('AStarButton');
-    // При нажатии на кнопку A_starButton вызываем функцию manage с аргументом 'AStar'
-    A_starButton.addEventListener('click', () => {
-        manage('AStar')
-    });
+    A_starButton.addEventListener('click',()=>{ manage('AStar')});
+
     let antButton = document.getElementById('antButton');
-    // При нажатии на кнопку antButton вызываем функцию manage с аргументом 'ant'
-    antButton.addEventListener('click', () => {
-        manage('ant')
-    });
+    antButton.addEventListener('click',()=>{ manage('ant')});
+
+    let clusterButton = document.getElementById('clusterButton');
+    clusterButton.addEventListener('click',()=>manage('cluster'));
+
+    let neuralNetworkButton = document.getElementById('neuralNetworkButton');
+    neuralNetworkButton.addEventListener('click',()=>manage('neuralNetwork'));
+
 }
 
-// Инициализация переменных
-let use = false; // Флаг использования
-let lastFunction; // Последняя функция
-let lastId; // Последний идентификатор
 
-// Функция создания кнопки "Старт"
+let use = false;
+let lastFunction;
+let lastId;
+
+
 function createButtonStart(functionName) {
     let buttonStart = document.createElement('button');
     buttonStart.id = 'startButton';
@@ -41,7 +42,6 @@ function createButtonStart(functionName) {
     buttonStart.onmouseout = function() { this.style.backgroundColor = '#1D1F20'; };
     document.body.append(buttonStart);
 }
-// Функция создания кнопки "Очистить"
 function createButtonClear() {
     let buttonClear = document.createElement('button');
     buttonClear.id = 'clearButton';
@@ -65,29 +65,70 @@ function createButtonClear() {
     buttonClear.onmouseout = function() { this.style.backgroundColor = '#1D1F20'; };
     document.body.append(buttonClear);
 }
-
-// Функция создания поля
-function createField() {
+function createField(){
     let field = document.createElement('canvas');
     field.id = 'fieldCanvas';
     field.style.zIndex = '2';
     field.style.position = 'absolute';
 
-    // Значения для изменения размера поля
+    //значени для изменения размера поля
     let xOffset = 600;
-    let yOffset = 100; // Высота заголовка
+    let yOffset = 100;// header height
 
-    // 200 для того, чтобы одинаково хорошо работал и с
-    field.width = Math.ceil((window.innerWidth - xOffset) / 10) * 10;
-    field.height = Math.ceil((window.innerHeight - yOffset) / 10) * 10;
-    field.style.left = '20%   ';
-    field.style.right = '20%';
-    field.style.bottom = '5%';
-    field.style.top = '5%';
+    //200 для того чтоб одинакого хорошо работал и с
+    field.width  = Math.ceil((window.innerWidth  - xOffset)/10)*10;
+    field.height = Math.ceil((window.innerHeight - yOffset)/10)*10;
+    field.style.left='20%   ';
+    field.style.right='20%';
+    field.style.bottom='5%';
+    field.style.top='5%';
     document.body.append(field);
-}
 
-// Функция создания выбора цвета пользователя
+}
+function createCanvasForNeuralNetwork(){
+    let fieldCanvasForNeuralNetwork = document.createElement('canvas');
+    fieldCanvasForNeuralNetwork.id = 'fieldCanvasForNeuralNetwork';
+    fieldCanvasForNeuralNetwork.style.zIndex = '2';
+    fieldCanvasForNeuralNetwork.style.position = 'absolute';
+    fieldCanvasForNeuralNetwork.style.backgroundColor = '#F8F0D6FF';
+    fieldCanvasForNeuralNetwork.style.color = '#F8F0D6FF';
+
+    //значени для изменения размера поля
+    let xOffset = 600;
+    let yOffset = 100;// header height
+
+    //200 для того чтоб одинакого хорошо работал и с
+    fieldCanvasForNeuralNetwork.width  = Math.ceil((window.innerWidth  - xOffset)/10)*10;
+    fieldCanvasForNeuralNetwork.height = Math.ceil((window.innerHeight - yOffset)/10)*10;
+    fieldCanvasForNeuralNetwork.style.left='20%   ';
+    fieldCanvasForNeuralNetwork.style.right='20%';
+    fieldCanvasForNeuralNetwork.style.bottom='5%';
+    fieldCanvasForNeuralNetwork.style.top='5%';
+    document.body.append(fieldCanvasForNeuralNetwork);
+
+    launch('neuralNetwork');
+
+}
+function createCanvasForNumbers(){
+    let fieldCanvasForForNumbers = document.createElement('canvas');
+    fieldCanvasForForNumbers.id = 'fieldCanvasForForNumbers';
+    fieldCanvasForForNumbers.style.zIndex = '2';
+    fieldCanvasForForNumbers.style.position = 'absolute';
+    fieldCanvasForForNumbers.style.backgroundColor = '#f5b475';
+    fieldCanvasForForNumbers.style.color = '#f5b475';
+
+    //значени для изменения размера поля
+    let xOffset = 600;
+    let yOffset = 100;// header height
+
+    //200 для того чтоб одинакого хорошо работал и с
+
+    fieldCanvasForForNumbers.style.left='80%   ';
+    fieldCanvasForForNumbers.style.right='80%';
+    fieldCanvasForForNumbers.style.bottom='5%';
+    fieldCanvasForForNumbers.style.top='5%';
+    document.body.append(fieldCanvasForForNumbers);
+}
 function createColorUser() {
     let colorBolder = document.createElement("input");
     colorBolder.id = 'colorUser';
@@ -95,7 +136,7 @@ function createColorUser() {
     colorBolder.style.position = 'absolute';
     colorBolder.style.right = '10%';
     colorBolder.style.top = '25%';
-    colorBolder.value = '#173cd0';
+    colorBolder.value = '#645117';
     colorBolder.style.border = 'none';
     colorBolder.style.height = '40px';
     colorBolder.style.width = '40px';
@@ -105,7 +146,6 @@ function createColorUser() {
 
     document.body.append(colorBolder);
 }
-// Функция создания слайдера размера
 function createSliderSize() {
     let sliderSize = document.createElement('input');
     sliderSize.type = 'range';
@@ -130,8 +170,7 @@ function createSliderSize() {
     sliderSize.oninput = function() { this.style.background = 'linear-gradient(to right, #82CFD0 0%, #82CFD0 ' + this.value + '%, #d3d3d3 ' + this.value + '%, #d3d3d3 100%)'; };
     document.body.append(sliderSize);
 }
-// Функция создания изображения "Старт"
-function createImgStart() {
+function createImgStart(){
     let imgStart = document.createElement('img');
     imgStart.id = 'startImg';
     imgStart.src = 'resources/russia-svgrepo-com.svg'
@@ -143,9 +182,7 @@ function createImgStart() {
     imgStart.style.zIndex = '2';
     document.body.append(imgStart);
 }
-
-// Функция создания изображения "Финиш"
-function createImgFinish() {
+function createImgFinish(){
     let imgFinish = document.createElement('img');
     imgFinish.id = 'finishImg';
     imgFinish.src = 'resources/china-svgrepo-com.svg'
@@ -158,37 +195,33 @@ function createImgFinish() {
     document.body.append(imgFinish);
 }
 
-// Функция создания цвета границы
-function createColorBorder() {
+function  createColorBorder(){
     let borderColor = document.createElement('input');
     borderColor.type = 'color';
-    borderColor.id = 'borderColor';
+    borderColor.id='borderColor';
     borderColor.value = '#000000'
     borderColor.style.position = 'absolute';
     borderColor.style.top = '55%';
     borderColor.style.right = '10%';
     document.body.append(borderColor);
 }
-
-// Функция создания цвета следа
-function createColorTrace() {
+function  createColorTrace(){
     let traceColor = document.createElement('input');
     traceColor.type = 'color';
-    traceColor.id = 'traceColor';
+    traceColor.id='traceColor';
     traceColor.value = '#08b6b0'
     traceColor.style.position = 'absolute';
     traceColor.style.top = '45%';
     traceColor.style.right = '10%';
     document.body.append(traceColor);
-}
 
-// Функция создания кнопки генерации карты
-function createGenerationMapButton() {
+}
+function createGenerationMapButton(){
     let generationMap = document.createElement('button');
     generationMap.id = 'generationMap';
     generationMap.style.width = '50px';
-    generationMap.style.height = '20px';
-    generationMap.style.backgroundColor = '#032cc5';
+    generationMap.style.height='20px';
+    generationMap.style.backgroundColor =  '#022cab';
     generationMap.textContent = 'generationMap';
     generationMap.style.position = 'absolute';
     generationMap.style.top = '45%';
@@ -196,63 +229,71 @@ function createGenerationMapButton() {
     document.body.append(generationMap);
 }
 
-// Функция создания башни
-function createTower() {
-    let tower = document.createElement('img');
-}
+function createNumInput(){
+    let num = document.createElement('input');
+    num.style.backgroundColor='#778edc';
+    num.id='numField';
+    num.type='text';
+    num.style.left = '5%';
+    num.style.top='45%';
+    num.style.position = 'absolute';
+    document.body.append(num);
 
-// Функция удаления цвета границы
-function deleteColorBorder() {
+}
+function createTower(){
+    let tower = document.createElement('img');
+
+}
+function deleteNumInput(){
+    document.getElementById('numField').remove();
+}
+function deleteColorBorder(){
     document.getElementById('borderColor').remove();
 }
-
-// Функция удаления цвета следа
-function deleteColorTrace() {
+function deleteColorTrace(){
     document.getElementById('traceColor').remove();
 }
-
-// Функция удаления кнопки генерации карты
-function deleteGenerationMapButton() {
+function deleteGenerationMapButton(){
     document.getElementById('generationMap').remove();
 }
-
-// Функция удаления поля
-function deleteField() {
+function deleteField(){
     document.getElementById('fieldCanvas').remove();
 }
 
-// Функция удаления кнопки "Очистить"
-function deleteButtonClear() {
+function deleteButtonClear(){
     document.getElementById('clearButton').remove();
 }
 
-// Функция удаления кнопки "Старт"
-function deleteButtonStart() {
+function deleteButtonStart(){
     document.getElementById('startButton').remove();
 }
 
-// Функция удаления слайдера размера
-function deleteSliderSize() {
+function deleteSliderSize(){
     document.getElementById('slider').remove();
 }
 
-// Функция удаления изображения "Финиш"
-function deleteImgFinish() {
+function deleteImgFinish(){
     document.getElementById('finishImg').remove();
 }
 
-// Функция удаления изображения "Старт"
-function deleteImgStart() {
+function deleteImgStart(){
     document.getElementById('startImg').remove();
 }
-
-// Функция удаления цвета пользователя
-function deleteColorUser() {
+function  deleteColorUser(){
     document.getElementById('colorUser').remove();
 }
 
-// Функция создания визуализации A_star
-function createVisualizationA_star(functionName) {
+function deleteCanvasForNeuralNetwork(){
+    document.getElementById('fieldCanvasForNeuralNetwork').remove();
+}
+function deleteCanvasForNumbers(){
+    document.getElementById('fieldCanvasForNumbers').remove();
+}
+function returnCoordinate(){
+    startCoordinate = [];
+    finishCoordinate=[];
+}
+function createVisualizationA_star(functionName){
     createField();
     createButtonClear();
     createButtonStart(functionName);
@@ -269,14 +310,33 @@ function createVisualizationA_star(functionName) {
     use = true;
 }
 
-// Функция возврата координат
-function returnCoordinate() {
-    startCoordinate = [];
-    finishCoordinate = [];
+function createVisualizationCluster(functionName){
+    createField();
+    createButtonClear();
+    createButtonStart(functionName);
+    createSliderSize();
+    createColorUser();
+    createColorTrace();
+    createNumInput();
+    creatArea(functionName);
 }
 
-// Функция удаления визуализации A_star
-function deleteVisualizationA_star() {
+function createVisualizationAnt(functionName){
+    createField();
+    createButtonClear();
+    createButtonStart(functionName);
+    createSliderSize();
+    createColorTrace();
+    createColorUser();
+    creatArea(functionName);
+}
+function createVisualizationNeuralNetwork(functionName){
+    createCanvasForNeuralNetwork();
+    createCanvasForNumbers();
+
+    creatArea(functionName);
+}
+function deleteVisualizationA_star(){
     deleteField();
     deleteButtonClear();
     deleteButtonStart();
@@ -288,21 +348,10 @@ function deleteVisualizationA_star() {
     deleteColorTrace();
     deleteColorUser();
     deleteColorBorder();
+
 }
 
-// Функция создания визуализации Ant
-function createVisualizationAnt(functionName) {
-    createField();
-    createButtonClear();
-    createButtonStart(functionName);
-    createSliderSize();
-    createColorTrace();
-    createColorUser();
-    creatArea(functionName);
-}
-
-// Функция удаления визуализации Ant
-function deleteVisualizationAnt() {
+function deleteVisualizationAnt(){
     deleteField();
     deleteButtonClear();
     deleteButtonStart();
@@ -310,11 +359,30 @@ function deleteVisualizationAnt() {
     returnCoordinate();
     deleteColorTrace();
     deleteColorUser();
+
+}
+function deleteVisualizationCluster(){
+    deleteField();
+    deleteButtonClear();
+    deleteButtonStart();
+    deleteSliderSize();
+    returnCoordinate();
+    deleteColorUser();
+    deleteNumInput();
+    deleteColorTrace();
 }
 
-// Функция управления
-function manage(functionName) {
-    if (!use) {
+
+
+
+function deleteVisualizationNeuralNetwork(){
+    deleteCanvasForNeuralNetwork();
+    deleteCanvasForNumbers();
+}
+
+
+function manage(functionName){
+    if (!use ) {
         switch (functionName) {
             case ('AStar'):
                 createVisualizationA_star(functionName);
@@ -323,17 +391,30 @@ function manage(functionName) {
             case ('ant'):
                 createVisualizationAnt(functionName);
                 lastFunction = deleteVisualizationAnt;
+                break;
+            case ('cluster'):
+                createVisualizationCluster(functionName);
+                lastFunction = deleteVisualizationCluster;
+                break;
+            case ('neuralNetwork'):
+
+                createVisualizationNeuralNetwork(functionName);
+                lastFunction = deleteVisualizationNeuralNetwork;
+                break;
         }
         use = true;
         lastId = functionName;
         console.log(lastFunction + ' ' + use + ' ' + lastId + ';')
-    } else if (use && lastId === functionName) {
+    } else if (use && lastId===functionName){
         lastFunction();
         use = false;
         lastId = undefined;
+
         console.log(lastFunction + ' ' + use + ' ' + lastId + ';')
-    } else if (use && lastId !== functionName) {
+    }else if (use && lastId!==functionName){
+
         lastFunction();
+
         switch (functionName) {
             case ('AStar'):
                 createVisualizationA_star(functionName);
@@ -343,63 +424,72 @@ function manage(functionName) {
                 createVisualizationAnt(functionName);
                 lastFunction = deleteVisualizationAnt;
                 break;
+            case ('cluster') :
+                createVisualizationCluster(functionName);
+                lastFunction = deleteVisualizationCluster;
+                break;
+            case ('neuralNetwork'):
+                createVisualizationNeuralNetwork(functionName);
+                lastFunction = deleteVisualizationNeuralNetwork;
+                break;
         }
         lastId = functionName;
-        console.log(lastFunction + ' ' + use + ' ' + lastId + ';')
+
     }
+
 }
 
 
-function launch(functionName) {
-    switch (functionName) {
+
+function launch(functionName){
+    switch (functionName){
         case ('AStar'):
-            // Проверяем, установлены ли старт и финиш
-            if (startCoordinate[0] === undefined && finishCoordinate[0] === undefined)
+            if(startCoordinate[0] === undefined && finishCoordinate[0] === undefined)
                 alert('Вы не установили старт и финиш');
-            // Проверяем, установлен ли старт
-            else if (startCoordinate[0] === undefined)
+            else if(startCoordinate[0] === undefined)
                 alert('Вы не установили старт');
-            // Проверяем, установлен ли финиш
-            else if (finishCoordinate[0] === undefined)
-                alert('Вы не установили финиш' + finishCoordinate[0]);
-            // Проверяем, находится ли старт в пределах поля
-            else if (startCoordinate[0] > row - 1 || startCoordinate[1] > col - 1 || startCoordinate[0] < 0
-                || startCoordinate[1] < 0)
-                alert('установите старт на поле');
-            // Проверяем, находится ли финиш в пределах поля
-            else if (finishCoordinate[0] > row - 1 || finishCoordinate[1] > col - 1 || finishCoordinate[0] < 0
-                || finishCoordinate[1] < 0)
+            else if(finishCoordinate[0] === undefined)
+                alert('Вы не установили финиш'+ finishCoordinate[0]);
+            else if (startCoordinate[0]>row-1 || startCoordinate[1]>col-1||startCoordinate[0]<0
+                || startCoordinate[1]<0)
+                alert('установите старт на поле' );
+
+            else if(finishCoordinate[0]>row-1 || finishCoordinate[1]>col-1||finishCoordinate[0]<0
+                || finishCoordinate[1]<0)
                 alert('установите финиш на поле');
             else {
-                // Запускаем алгоритм A* и получаем результат
-                let result = aStarSearch(matrixA_star, [startCoordinate[1], startCoordinate[0]], [finishCoordinate[1], finishCoordinate[0]]);
-                // Проверяем, совпадают ли начальная и конечная точки с установленными
-                if (result[0][0] !== startCoordinate [0]
-                    || result[0][1] !== startCoordinate [1]
-                    || result[result.length - 1][0] !== finishCoordinate[0]
-                    || result[result.length - 1][1] !== finishCoordinate[1])
-                    alert("нельзя простроить путь");
-                else managePath(result); // Управляем путем
+                let result = aStarSearch(matrixA_star, [startCoordinate[1],startCoordinate[0]], [finishCoordinate[1],finishCoordinate[0]]);
+                if(result[0][0]              !==startCoordinate [0]
+                || result[0][1]              !==startCoordinate [1]
+                || result[result.length-1][0]!==finishCoordinate[0]
+                || result[result.length-1][1]!==finishCoordinate[1])
+                    alert("незля простороить путь");
+                else managePath(result);
 
             }
             break;
         case('ant'):
-            // Проверяем, добавлены ли города
-            if (points.length === 0)
+
+            if(points.length ===0)
                 alert('Добавьте города');
-            // Проверяем, добавлено ли достаточное количество городов
-            else if (points.length === 1)
+            else if (points.length ===1)
                 alert('Вы добавили слишком мало городов');
             else {
-                // Запускаем алгоритм муравьиной колонии и получаем результат
                 const {bestPath, shortestDistance} = antColonyOptimization(points, 5, 100, 1, 0.5, 100);
-                // Преобразуем индексы в координаты
                 let array = bestPath.map(index => points[index]);
-                console.log("Shortest Path:", array); // Выводим кратчайший путь
-                console.log("Shortest Distance:", shortestDistance); // Выводим кратчайшее расстояние
-                createPath(array); // Создаем путь
+                console.log("Shortest Path:", array);
+                console.log("Shortest Distance:", shortestDistance);
+                createPath(array);
             }
             break;
+        case ('cluster'):
+            let num = document.getElementById('numField').value;
 
+            KMean(num,points);
+            break;
+        case ('neuralNetwork'):
+            setup();
+            main();
+            break;
     }
 }

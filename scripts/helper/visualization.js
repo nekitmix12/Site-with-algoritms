@@ -101,6 +101,65 @@ function creatArea(functionName) {
 
             canvas.addEventListener('mousedown',(event)=>
                 draw(event,canvas,canvasField,slider,colorUser.value));
+            break;
+        case ('cluster'):
+            canvas = document.getElementById('fieldCanvas');
+            buttonClear = document.getElementById('clearButton');
+            startButton = document.getElementById('startButton');
+            slider = document.getElementById('slider');
+            colorUser = document.getElementById('colorUser');
+            canvasField = canvas.getContext('2d');
+
+            startButton.addEventListener("click", () => {
+                manageCluster(canvas,canvasField,slider,colorUser.value);});
+
+            slider.addEventListener('input', ()=>{
+                sliderManegeAnt(slider,canvasField,canvas)});
+
+            buttonClear.addEventListener("click",()=>{
+                buttonClearManege(canvas,slider,canvasField)});
+
+            createMatrix(canvas,slider);
+
+            canvas.addEventListener('mousedown',(event)=>
+                draw(event,canvas,canvasField,slider,colorUser.value));
+            break;
+        case ('neuralNetwork'):
+            canvas = document.getElementById('fieldCanvasForNeuralNetwork');
+            buttonClear = document.getElementById('clearButton');
+            startButton = document.getElementById('startButton');
+            const s_canvas = document.getElementById("scaled_canvas");
+            const resetButton = document.getElementById("reset");
+
+            const CELL_COUNT = 50;
+            const CELL_SIZE = 10;
+            const width = CELL_SIZE * CELL_COUNT;
+            const height = CELL_SIZE * CELL_COUNT;
+            const PEN_SIZE = 30;
+            canvas.height = height;
+            canvas.width = width;
+            s_canvas.width = 50;
+            s_canvas.height = 50;
+            const scaledContext = s_canvas.getContext("2d");
+
+
+            canvas.addEventListener("mousedown",(el)=>
+                startDrawing(el));
+            canvas.addEventListener("mouseup",()=>
+                endDrawing(scaledContext,canvas));
+            canvas.addEventListener("mousemove",(el)=>
+                drawNum(el,context));
+
+
+            document.getElementById("reset").addEventListener("click", () => {
+                reset_canvas(context);
+            });
+
+            const context = canvas.getContext("2d", {willReadFrequently: true});
+            context.imageSmoothingEnabled = true;
+            context.imageSmoothingQuality = "high";
+
+
 
     }
 
@@ -121,11 +180,16 @@ function creatArea(functionName) {
 
 }
 
-
+function manageCluster(canvas,canvasField,slider,color)
+{
+    matrixUpdate(canvas,canvasField,slider,color);
+    console.log(color + 'manageCluster');
+    getPoint();
+    launch(document.getElementById('startButton').value);
+}
 function manageStartAStar(canvasField,canvas,slider,color){
     matrixUpdate(canvas,canvasField,slider,color);
-    console.log(color);
-    launch(document.getElementById('startButton').value)
+    launch(document.getElementById('startButton').value);
 }
 function getCountPoint(){
     let countPoint = 0;
@@ -134,6 +198,77 @@ function getCountPoint(){
             if(matrixA_star[i][j]===1)countPoint++;
     return countPoint;
 }
+function drawNum(elem,context){
+
+    if (drawing){
+
+        if (elem.button != 0){
+            return;
+        }
+
+        const canvasBounding = canvas.getBoundingClientRect();
+        const x = elem.clientX - canvasBounding.left;
+        const y = elem.clientY - canvasBounding.top;
+
+        for (let currX = x - PEN_SIZE; currX <= x + PEN_SIZE; currX += CELL_SIZE){
+            for (let currY = y - PEN_SIZE; currY <= y + PEN_SIZE; currY += CELL_SIZE){
+
+                let cellX = currX + CELL_SIZE / 2;
+                let cellY = currY + CELL_SIZE / 2;
+
+                const calcX = x + CELL_SIZE / 2;
+                const calcY = y + CELL_SIZE / 2;
+
+                const dist = Math.sqrt(Math.pow(cellX - calcX, 2) + Math.pow(cellY - calcY, 2));
+
+                if (dist < PEN_SIZE){
+
+                    let p = context.getImageData(cellX - CELL_SIZE / 2, cellY - CELL_SIZE / 2, 1, 1);
+
+                    let color = rgbToHex(
+                        Math.max(Math.min(Math.floor(255 - (Math.sqrt(dist / PEN_SIZE) * 255)) + p.data[0], 255), p.data[0]),
+                        Math.max(Math.min(Math.floor(255 - (Math.sqrt(dist / PEN_SIZE) * 255)) + p.data[1], 255), p.data[1]),
+                        Math.max(Math.min(Math.floor(255 - (Math.sqrt(dist / PEN_SIZE) * 255)) + p.data[2], 255), p.data[2])
+                    );
+
+
+                    cellX = Math.min(Math.max(Math.floor(currX / CELL_SIZE), 0), width);
+                    cellY = Math.min(Math.max(Math.floor(currY / CELL_SIZE), 0), height);
+
+                    fillCell(cellX, cellY, color,context);
+
+                }
+            }
+        }
+    }
+}
+
+function startDrawing(elem){
+    drawing = true;
+    drawNum(elem);
+}
+
+function endDrawing(scaledContext,canvas){
+    drawing = false;
+    scale(scaledContext,canvas);
+    main();
+}
+function fillCell(cellX, cellY, color,context){
+    const startX = cellX * CELL_SIZE;
+    const startY = cellY * CELL_SIZE;
+
+    context.fillStyle = color;
+    context.fillRect(startX, startY, CELL_SIZE, CELL_SIZE);
+}
+
+function scale(scaledContext,canvas) {
+    scaledContext.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, 50, 50);
+}
+
+function getImageData(scaledContext,s_canvas) {
+    return scaledContext.getImageData(0, 0, s_canvas.width, s_canvas.height);
+}
+
 function getPoint(){
     let colLocal = getCountPoint();
     points = new Array(colLocal);
@@ -152,7 +287,6 @@ function getPoint(){
                 points[localCounter][1] = i;
                 localCounter++;
             }
-    console.log(points);
 }
 function manageStartAnt(canvas,canvasField,slider,color){
     matrixUpdate(canvas,canvasField,slider,color);
@@ -162,7 +296,7 @@ function manageStartAnt(canvas,canvasField,slider,color){
 }
 function matrixUpdate(canvas,canvasField,slider,color){
     clearField(canvasField,canvas);
-    console.log(color);
+    console.log(color + 'matrixUpdate');
     drawMapByMatrix(matrixA_star,canvas,canvasField,slider,color);
 }
 function drawMapByMatrix(matrix,canvas,canvasField,slider,color){
@@ -219,6 +353,35 @@ function draw(event,canvas,canvasField,slider,userColor){
         canvas.onmousemove = null;
     }
 }
+function createPointWithDeleteLate(array){
+    let canvas = document.getElementById('fieldCanvas');
+    let slider = document.getElementById('slider');
+    let img =  new Image();
+    let traceColor = document.getElementById('traceColor').value;
+    console.log(traceColor);
+    let borderColor = document.getElementById('colorUser').value;
+    let canvasField = canvas.getContext('2d');
+    img.src = 'resources/penguin-svgrepo-com.svg';
+    img.style.position = 'absolute';
+    img.style.zIndex='10';
+
+    matrixUpdate(canvas,canvasField,slider,borderColor);
+    canvasField.beginPath();
+
+
+
+
+    img.onload=()=> {
+        for (let i = 0; i < array.length; i++) {
+            canvasField.fillStyle  = traceColor;
+            canvasField.fillRect(array[i][0] * slider.value, array[i][1] * slider.value, slider.value, slider.value);
+            createPicture(img, array[i][0] * slider.value, array[i][1] * slider.value, canvasField, slider.value);
+
+        }
+    }
+
+    canvasField.closePath();
+}
 function managePath(array){
     let canvas = document.getElementById('fieldCanvas');
     let traceColor = document.getElementById('traceColor');
@@ -228,6 +391,7 @@ function managePath(array){
     img.src = 'resources/penguin-svgrepo-com.svg';
     img.style.position = 'absolute';
     canvasField.fillStyle = traceColor.value;
+
 
     img.onload = ()=>{
         for(let i =0;i<array.length-1;i++){
@@ -256,8 +420,14 @@ function createPath(array){
     }
     canvasField.stroke();
 }
-function createPicture(img,x,y,field,size,){
+function createPicture(img,x,y,field,size){
     field.drawImage(img,x,y,size,size);
+}
+
+function reset_canvas(context) {
+    context.fillStyle = 'black';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    main();
 }
 
 function updateCoordinate(imgFinish,imgStart,canvas,slider){

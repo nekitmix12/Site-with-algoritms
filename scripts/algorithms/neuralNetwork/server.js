@@ -1,40 +1,91 @@
 "use strict";
 
-const http = require('http');
-const fs = require('fs');
+const http = require("http");
+const fs = require("fs");
 
-const server = http.createServer(async (req, res) => {
-    const routes = {
-        '/': { filePath: './index.html', contentType: 'text/html' },
-        '/modelManagement.js': { filePath: './modelManagement.js', contentType: 'text/javascript' },
-        '/styles.css': { filePath: './styles.css', contentType: 'text/css' },
-        '/getData': { filePath: './samples/json/model.json', contentType: 'application/json' }
-    };
+function main() {
 
-    const route = routes[req.url];
+    const server = http.createServer(async (req, res) => {
 
-    if (route) {
-        sendFile(res, route.filePath, route.contentType);
-    } else {
-        res.writeHead(404);
-        res.end();
-    }
-});
 
-server.listen(3000, () => {
-    console.log("Server up and running on http://localhost:3000");
-});
+        if (req.url === '/') {
 
-function sendFile(res, filePath, contentType) {
-    fs.readFile(filePath, (err, data) => {
-        if (err) {
-            console.log(err);
-            res.writeHead(500);
-            res.end();
-        } else {
-            res.writeHead(200, { 'Content-Type': contentType });
-            res.write(data);
-            res.end();
+            fs.readFile('./index.html', (err, data) => {
+                if (err) {
+
+                    console.log(err);
+                    res.end();
+
+                } else {
+
+                    res.writeHead(200, {'Content-Type': 'text/html'});
+                    res.write(data);
+                    res.end();
+
+                }
+            });
+        }
+
+        if (req.url === '/scripts/algorithms/neuralNetwork/modelManagement.js') {
+
+            fs.readFile('./scripts/algorithms/neuralNetwork/modelManagement.js', (err, data) => {
+                if (err) {
+
+                    console.log(err);
+                    res.end();
+
+                } else {
+
+                    res.writeHead(200, {'Content-Type': 'text/javascript'});
+                    res.write(data);
+                    res.end();
+
+                }
+            });
+
+        }
+
+        if (req.url === '/style.css') {
+
+            fs.readFile('./style.css', (err, data) => {
+                if (err) {
+
+                    console.log(err);
+                    res.end();
+
+                } else {
+
+                    res.writeHead(200, {'Content-Type': 'text/css'});
+                    res.write(data);
+                    res.end();
+
+                }
+            });
+        }
+
+        if (req.url === '/getData') {
+
+            fs.readFile('./json/model.json', (err, data) => {
+                if (err) {
+
+                    console.log(err);
+                    res.end();
+
+                } else {
+
+                    res.writeHead(200, {'Content-Type': 'application/json'});
+                    res.write(data);
+                    res.end();
+
+                }
+            });
+
         }
     });
+
+    server.listen(3000, () => {
+        console.log("Server up and running on http://localhost:3000");
+    });
 }
+
+main();

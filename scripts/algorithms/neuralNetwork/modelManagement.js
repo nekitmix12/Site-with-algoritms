@@ -3,8 +3,6 @@
 const IMG_DIMENSIONS = 50 * 50;
 const HIDDEN_LAYER_1 = 150;
 const HIDDEN_LAYER_2 = 150;
-const fs = require('fs');
-
 
 let index = 0;
 let t_index = 0;
@@ -381,131 +379,35 @@ trainModel();
 
 
  */
-let modelData = null;
 
-async function setup() {
+let modelData = null;
+async function setup(){
     const response = await fetch('http://localhost:3000/getData');
     modelData = await response.json();
     modelData = JSON.parse(modelData);
 }
 
 setup();
-//TODO:: create canvas for displaying of neural network and do other stuff with it's design
 
-const canvas = document.getElementById("canvas");
-const resetButton = document.getElementById("reset");
-const CELL_COUNT = 50;
-const CELL_SIZE = 10;
-const width = CELL_SIZE * CELL_COUNT;
-const height = CELL_SIZE * CELL_COUNT;
-const PEN_SIZE = 30;
-
-
-
-const context = canvas.getContext("2d", {willReadFrequently: true});
-context.imageSmoothingEnabled = true;
-context.imageSmoothingQuality = "high";
-
-canvas.height = height;
-canvas.width = width;
 
 let drawing = false;
 
-function startDrawing(elem){
-    drawing = true;
-    draw(elem);
-}
-
-function endDrawing(){
-    drawing = false;
-    scale();
-    main();
-}
-
 function componentToHex(c) {
-    const hex = c.toString(16);
+    let hex = c.toString(16);
     return hex.length === 1 ? "0" + hex : hex;
 }
 
 function rgbToHex(r, g, b) {
-    return `#${componentToHex(r)}${componentToHex(g)}${componentToHex(b)}`;
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
-
-function calculateDistance(x1, y1, x2, y2) {
-    return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
-}
-
-function getColor(dist, p) {
-    return rgbToHex(
-        Math.max(Math.min(Math.floor(255 - (Math.sqrt(dist / PEN_SIZE) * 255)) + p.data[0], 255), p.data[0]),
-        Math.max(Math.min(Math.floor(255 - (Math.sqrt(dist / PEN_SIZE) * 255)) + p.data[1], 255), p.data[1]),
-        Math.max(Math.min(Math.floor(255 - (Math.sqrt(dist / PEN_SIZE) * 255)) + p.data[2], 255), p.data[2])
-    );
-}
-
-function draw(elem) {
-    if (!drawing || elem.button !== 0) {
-        return;
-    }
-
-    const canvasBounding = canvas.getBoundingClientRect();
-    const x = elem.clientX - canvasBounding.left;
-    const y = elem.clientY - canvasBounding.top;
-
-    for (let currX = x - PEN_SIZE; currX <= x + PEN_SIZE; currX += CELL_SIZE) {
-        for (let currY = y - PEN_SIZE; currY <= y + PEN_SIZE; currY += CELL_SIZE) {
-
-            let cellX = currX + CELL_SIZE / 2;
-            let cellY = currY + CELL_SIZE / 2;
-
-            const dist = calculateDistance(cellX, cellY, x + CELL_SIZE / 2, y + CELL_SIZE / 2);
-
-            if (dist < PEN_SIZE) {
-                let p = context.getImageData(cellX - CELL_SIZE / 2, cellY - CELL_SIZE / 2, 1, 1);
-                let color = getColor(dist, p);
-
-                cellX = Math.min(Math.max(Math.floor(currX / CELL_SIZE), 0), width);
-                cellY = Math.min(Math.max(Math.floor(currY / CELL_SIZE), 0), height);
-
-                fillCell(cellX, cellY, color);
-            }
-        }
-    }
-}
-
-function fillCell(cellX, cellY, color){
-    const startX = cellX * CELL_SIZE;
-    const startY = cellY * CELL_SIZE;
-
-    context.fillStyle = color;
-    context.fillRect(startX, startY, CELL_SIZE, CELL_SIZE);
-}
-
-canvas.addEventListener("mousedown", startDrawing);
-canvas.addEventListener("mouseup", endDrawing);
-canvas.addEventListener("mousemove", draw);
-
-const s_canvas = document.getElementById("scaled_canvas");
-s_canvas.width = 50;
-s_canvas.height = 50;
-const scaledContext = s_canvas.getContext("2d");
-
-function scale() {
-    scaledContext.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, 50, 50);
-}
-
-function getImageData() {
-    return scaledContext.getImageData(0, 0, s_canvas.width, s_canvas.height);
-}
-
-document.getElementById("reset").addEventListener("click", () => {
-    reset_canvas();
-});
-
 
 function main() {
 
-    let { data } = getImageData();
+    const s_canvas = document.getElementById("scaled_canvas");
+    s_canvas.width = 50;
+    s_canvas.height = 50;
+    const scaledContext = s_canvas.getContext("2d");
+    let { data } = getImageData(scaledContext,s_canvas);
     let image = [];
 
     for (let i = 0; i < data.length; i += 4) {
@@ -535,12 +437,6 @@ function main() {
     }
 }
 
-//main();
-
-function reset_canvas() {
-    context.fillStyle = 'black';
-    context.fillRect(0, 0, canvas.width, canvas.height);
-    main();
-}
+main();
 
 
