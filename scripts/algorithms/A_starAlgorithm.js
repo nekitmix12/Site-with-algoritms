@@ -125,16 +125,3 @@ function aStarSearch(grid, start, goal) {
 function heuristic(a, b) {
     return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
 }
-
-// Тест
-const grid = [
-    [0, 0, 0, 0, 1, 0],
-    [0, 1, 1, 0, 0, 0],
-    [2, 1, 0, 0, 3, 0],
-    [0, 1, 0, 1, 0, 0]
-];
-
-const start = [2, 0]; // начальная позиция (2)
-const goal = [2, 4]; // конечная позиция (3)
-const result = aStarSearch(grid, start, goal);
-console.log(result);

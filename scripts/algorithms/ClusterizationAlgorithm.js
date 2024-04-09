@@ -6,7 +6,7 @@ function KMeans(canvas, data, k) {
     this.means = []; // Массив для хранения центров кластеров
     this.assignments = []; // Массив для хранения принадлежности точек к кластерам
     this.iterations = 0; // Счетчик итераций
-
+    this.clusterMatrix = []; // Матрица для хранения точек кластеров
     this.initialize(); // Инициализация начальных значений
 }
 
@@ -24,8 +24,7 @@ KMeans.prototype.assignClusterToDataPoints = function() {
     for (let i = 0; i < this.data.length; i++) {
         let point = this.data[i];
         let distances = this.means.map(mean => this.distance(point, mean));
-        let closestIndex = distances.indexOf(Math.min(...distances));
-        this.assignments[i] = closestIndex;
+        this.assignments[i] = distances.indexOf(Math.min(...distances));
     }
 };
 
@@ -45,6 +44,18 @@ KMeans.prototype.moveMeans = function() {
         }
     }
 };
+KMeans.prototype.generateClusterMatrix = function() {
+    // инициализируем матрицу кластеров
+    for (let i = 0; i < this.k; i++) {
+        this.clusterMatrix[i] = [];
+    }
+
+    // Прикрепляем точки к кластерам
+    for (let i = 0; i < this.data.length; i++) {
+        let clusterIndex = this.assignments[i];
+        this.clusterMatrix[clusterIndex].push(this.data[i]);
+    }
+};
 
 KMeans.prototype.distance = function(pointA, pointB) {
     // Вычисление Евклидова расстояния между двумя точками
@@ -58,6 +69,8 @@ KMeans.prototype.run = function() {
     this.assignClusterToDataPoints();
     this.moveMeans();
     this.iterations++;
+    this.generateClusterMatrix();
+    return this.clusterMatrix;
 };
 
 KMeans.prototype.draw = function() {

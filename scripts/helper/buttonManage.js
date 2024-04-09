@@ -1,30 +1,23 @@
+// Когда страница загружена, добавляем обработчики событий для кнопок
 window.onload = function () {
     let A_starButton = document.getElementById('AStarButton');
+    // При нажатии на кнопку A_starButton вызываем функцию manage с аргументом 'AStar'
     A_starButton.addEventListener('click', () => {
-        manageA_star('AStar')
+        manage('AStar')
     });
-    document.getElementById('clusterButton').addEventListener('click', function() {
-        // Ensure canvas, data, and k are defined and accessible
-        let canvas = document.getElementById('canvas'); // Replace 'canvas' with the actual id of your canvas element
-        let data = []; // Replace with your actual data
-        let k = 3; // Replace with the actual number of clusters you want
-
-        let kmeans = new KMeans(canvas, data, k);
-        kmeans.run();
-        kmeans.draw();
+    let antButton = document.getElementById('antButton');
+    // При нажатии на кнопку antButton вызываем функцию manage с аргументом 'ant'
+    antButton.addEventListener('click', () => {
+        manage('ant')
     });
 }
-let use = false;
-let firstUse = true;
-let buttonContainer = document.createElement('div');
-buttonContainer.style.display = 'flex';
-buttonContainer.style.justifyContent = 'space-between';
-buttonContainer.style.position = 'absolute';
-buttonContainer.style.top = '20%';
-buttonContainer.style.right = '10%';
-buttonContainer.style.width = '15hw';
 
+// Инициализация переменных
+let use = false; // Флаг использования
+let lastFunction; // Последняя функция
+let lastId; // Последний идентификатор
 
+// Функция создания кнопки "Старт"
 function createButtonStart(functionName) {
     let buttonStart = document.createElement('button');
     buttonStart.id = 'startButton';
@@ -32,29 +25,23 @@ function createButtonStart(functionName) {
     buttonStart.style.zIndex = '2';
     buttonStart.style.height = '40px';
     buttonStart.style.width = '100px';
-    buttonStart.style.position = 'static';
+    buttonStart.style.position = 'absolute';
     buttonStart.style.top = '20%';
     buttonStart.style.right = '15%';
-    buttonStart.style.marginLeft = '20px';
-    buttonStart.style.backgroundColor = '#4CAF50';
-    buttonStart.style.color = 'white';
+    buttonStart.style.backgroundColor = '#1D1F20';
+    buttonStart.style.color = '#FFFFFF';
     buttonStart.style.border = 'none';
+    buttonStart.style.borderRadius = '20px';
+    buttonStart.style.boxShadow = '0px 8px 15px rgba(0, 0, 0, 0.1)';
+    buttonStart.style.transition = 'all 0.3s ease 0s';
     buttonStart.style.cursor = 'pointer';
-    buttonStart.style.borderRadius = '12px';
-    buttonStart.style.fontSize = '18px';
+    buttonStart.style.textAlign = 'center';
     buttonStart.textContent = 'Start';
-    buttonStart.style.background = 'linear-gradient(to right, #ff0000, #ff7f7f)';
-    buttonStart.style.color = 'white';
-    buttonStart.style.border = 'none';
-    buttonStart.style.cursor = 'pointer';
-    buttonStart.style.borderRadius = '12px';
-    buttonStart.style.fontSize = '20px';
-    buttonStart.style.padding = '10px 20px';
-    buttonStart.style.transition = 'background 0.3s';
-
-    buttonContainer.append(buttonStart);
+    buttonStart.onmouseover = function() { this.style.backgroundColor = '#ff4757'; };
+    buttonStart.onmouseout = function() { this.style.backgroundColor = '#1D1F20'; };
+    document.body.append(buttonStart);
 }
-
+// Функция создания кнопки "Очистить"
 function createButtonClear() {
     let buttonClear = document.createElement('button');
     buttonClear.id = 'clearButton';
@@ -63,71 +50,62 @@ function createButtonClear() {
     buttonClear.style.zIndex = '2';
     buttonClear.style.height = '40px';
     buttonClear.style.width = '100px';
-    buttonClear.style.position = 'static';
+    buttonClear.style.position = 'absolute';
     buttonClear.style.top = '20%';
     buttonClear.style.right = '10%';
-    buttonClear.style.background = 'linear-gradient(to right, #008000, #70db70)';
-    buttonClear.style.color = 'white';
+    buttonClear.style.backgroundColor = '#1D1F20';
+    buttonClear.style.color = '#FFFFFF';
     buttonClear.style.border = 'none';
+    buttonClear.style.borderRadius = '20px';
+    buttonClear.style.boxShadow = '0px 8px 15px rgba(0, 0, 0, 0.1)';
+    buttonClear.style.transition = 'all 0.3s ease 0s';
     buttonClear.style.cursor = 'pointer';
-    buttonClear.style.borderRadius = '12px';
-    buttonClear.style.fontSize = '20px';
-    buttonClear.style.padding = '10px 20px';
-    buttonClear.style.transition = 'background 0.3s';
-    buttonClear.style.backgroundColor = '#f44336';
-    buttonClear.style.color = 'white';
-    buttonClear.style.border = 'none';
-    buttonClear.style.cursor = 'pointer';
-    buttonClear.style.borderRadius = '12px';
-    buttonClear.style.fontSize = '18px';
-    buttonClear.style.marginRight = '10px';
-    buttonContainer.append(buttonClear);
+    buttonClear.style.textAlign = 'center';
+    buttonClear.onmouseover = function() { this.style.backgroundColor = '#ff4757'; };
+    buttonClear.onmouseout = function() { this.style.backgroundColor = '#1D1F20'; };
+    document.body.append(buttonClear);
 }
 
 // Функция создания поля
-function createField(){
-    let field = document.createElement('canvas'); // Создаем холст
-    field.id = 'fieldCanvas'; // Устанавливаем id
-    field.style.zIndex = '2'; // Устанавливаем z-index
-    field.style.position = 'absolute'; // Устанавливаем позиционирование
+function createField() {
+    let field = document.createElement('canvas');
+    field.id = 'fieldCanvas';
+    field.style.zIndex = '2';
+    field.style.position = 'absolute';
 
-    adjustFieldSize(field); // Настраиваем размер поля
+    // Значения для изменения размера поля
+    let xOffset = 600;
+    let yOffset = 100; // Высота заголовка
 
-    document.body.append(field); // Добавляем поле в тело документа
-
-    // Добавляем слушатель событий на изменение размера окна
-    window.addEventListener('resize', function() {
-        adjustFieldSize(field); // Настраиваем размер поля
-    });
-
-}
-// Функция настройки размера поля
-function adjustFieldSize(field) {
-    // Настраиваем ширину поля, чтобы она была 75% от ширины окна
-    field.width = window.innerWidth * 0.7;
-
-    // Настраиваем высоту поля, чтобы она соответствовала высоте окна
-    var yOffset = 200; // высота заголовка
-    field.height = Math.ceil((window.innerHeight - yOffset)/200)*200;
-
-    // Выравниваем поле по левому краю экрана и оставляем место сверху для кнопок
-    field.style.left = '5%'; // Отступ слева
-    field.style.right = '30%'; // Отступ справа
-    field.style.bottom = '15%'; // Увеличиваем отступ снизу
-    field.style.top = '20%'; // Отступ сверху
+    // 200 для того, чтобы одинаково хорошо работал и с
+    field.width = Math.ceil((window.innerWidth - xOffset) / 10) * 10;
+    field.height = Math.ceil((window.innerHeight - yOffset) / 10) * 10;
+    field.style.left = '20%   ';
+    field.style.right = '20%';
+    field.style.bottom = '5%';
+    field.style.top = '5%';
+    document.body.append(field);
 }
 
-function createColor() {
+// Функция создания выбора цвета пользователя
+function createColorUser() {
     let colorBolder = document.createElement("input");
-    colorBolder.id = 'colorBolder';
+    colorBolder.id = 'colorUser';
     colorBolder.type = 'color';
     colorBolder.style.position = 'absolute';
     colorBolder.style.right = '10%';
     colorBolder.style.top = '25%';
-    colorBolder.value = '#f8d703';
+    colorBolder.value = '#173cd0';
+    colorBolder.style.border = 'none';
+    colorBolder.style.height = '40px';
+    colorBolder.style.width = '40px';
+    colorBolder.style.borderRadius = '50%';
+    colorBolder.style.cursor = 'pointer';
+    colorBolder.style.transition = 'all 0.3s ease 0s';
+
     document.body.append(colorBolder);
 }
-
+// Функция создания слайдера размера
 function createSliderSize() {
     let sliderSize = document.createElement('input');
     sliderSize.type = 'range';
@@ -140,9 +118,19 @@ function createSliderSize() {
     sliderSize.style.right = '10%';
     sliderSize.style.top = '30%';
     sliderSize.style.zIndex = '2';
+    sliderSize.style.width = '200px';
+    sliderSize.style.height = '25px';
+    sliderSize.style.background = '#d3d3d3';
+    sliderSize.style.outline = 'none';
+    sliderSize.style.opacity = '0.7';
+    sliderSize.style.borderRadius = '12px';
+    sliderSize.style.boxShadow = 'inset 0 0 5px #000';
+    sliderSize.style.cursor = 'pointer';
+    sliderSize.style.transition = 'all 0.3s ease 0s';
+    sliderSize.oninput = function() { this.style.background = 'linear-gradient(to right, #82CFD0 0%, #82CFD0 ' + this.value + '%, #d3d3d3 ' + this.value + '%, #d3d3d3 100%)'; };
     document.body.append(sliderSize);
 }
-
+// Функция создания изображения "Старт"
 function createImgStart() {
     let imgStart = document.createElement('img');
     imgStart.id = 'startImg';
@@ -156,6 +144,7 @@ function createImgStart() {
     document.body.append(imgStart);
 }
 
+// Функция создания изображения "Финиш"
 function createImgFinish() {
     let imgFinish = document.createElement('img');
     imgFinish.id = 'finishImg';
@@ -169,109 +158,124 @@ function createImgFinish() {
     document.body.append(imgFinish);
 }
 
+// Функция создания цвета границы
+function createColorBorder() {
+    let borderColor = document.createElement('input');
+    borderColor.type = 'color';
+    borderColor.id = 'borderColor';
+    borderColor.value = '#000000'
+    borderColor.style.position = 'absolute';
+    borderColor.style.top = '55%';
+    borderColor.style.right = '10%';
+    document.body.append(borderColor);
+}
+
+// Функция создания цвета следа
 function createColorTrace() {
     let traceColor = document.createElement('input');
     traceColor.type = 'color';
     traceColor.id = 'traceColor';
-    traceColor.value = '#00a6ff';
+    traceColor.value = '#08b6b0'
     traceColor.style.position = 'absolute';
     traceColor.style.top = '45%';
     traceColor.style.right = '10%';
-    traceColor.style.margin = '10px'; // Add margin
     document.body.append(traceColor);
 }
 
+// Функция создания кнопки генерации карты
 function createGenerationMapButton() {
     let generationMap = document.createElement('button');
     generationMap.id = 'generationMap';
-    generationMap.style.width = '100px';
-    generationMap.style.height = '40px';
-    generationMap.style.background = 'linear-gradient(to right, #032cc5, #4b6cb7)';
-    generationMap.style.color = 'white';
-    generationMap.style.border = 'none';
-    generationMap.style.cursor = 'pointer';
-    generationMap.style.borderRadius = '12px';
-    generationMap.style.fontSize = '20px';
-    generationMap.style.padding = '10px 20px';
-    generationMap.style.transition = 'background 0.3s';
-    generationMap.textContent = 'Generate';
-    generationMap.style.textAlign = 'center';
+    generationMap.style.width = '50px';
+    generationMap.style.height = '20px';
+    generationMap.style.backgroundColor = '#032cc5';
+    generationMap.textContent = 'generationMap';
     generationMap.style.position = 'absolute';
     generationMap.style.top = '45%';
     generationMap.style.right = '20%';
-    generationMap.style.margin = '10px';
     document.body.append(generationMap);
-
-    // Add hover effect
-    generationMap.onmouseover = function () {
-        this.style.background = 'linear-gradient(to right, #4b6cb7, #032cc5)';
-    }
-    generationMap.onmouseout = function () {
-        this.style.background = 'linear-gradient(to right, #032cc5, #4b6cb7)';
-    }
 }
 
+// Функция создания башни
+function createTower() {
+    let tower = document.createElement('img');
+}
+
+// Функция удаления цвета границы
+function deleteColorBorder() {
+    document.getElementById('borderColor').remove();
+}
+
+// Функция удаления цвета следа
 function deleteColorTrace() {
     document.getElementById('traceColor').remove();
 }
 
+// Функция удаления кнопки генерации карты
 function deleteGenerationMapButton() {
     document.getElementById('generationMap').remove();
 }
 
+// Функция удаления поля
 function deleteField() {
     document.getElementById('fieldCanvas').remove();
 }
 
+// Функция удаления кнопки "Очистить"
 function deleteButtonClear() {
     document.getElementById('clearButton').remove();
 }
 
+// Функция удаления кнопки "Старт"
 function deleteButtonStart() {
     document.getElementById('startButton').remove();
 }
 
+// Функция удаления слайдера размера
 function deleteSliderSize() {
     document.getElementById('slider').remove();
 }
 
+// Функция удаления изображения "Финиш"
 function deleteImgFinish() {
     document.getElementById('finishImg').remove();
 }
 
+// Функция удаления изображения "Старт"
 function deleteImgStart() {
     document.getElementById('startImg').remove();
 }
 
-function deleteColor() {
-    document.getElementById('colorBolder').remove();
+// Функция удаления цвета пользователя
+function deleteColorUser() {
+    document.getElementById('colorUser').remove();
 }
 
+// Функция создания визуализации A_star
 function createVisualizationA_star(functionName) {
     createField();
     createButtonClear();
     createButtonStart(functionName);
-
-    document.body.append(buttonContainer);
     createSliderSize();
     createImgFinish();
     createImgStart();
-    createColor();
     createGenerationMapButton();
+    createColorUser();
     createColorTrace();
+    createColorBorder();
 
+    creatArea(functionName);
 
-    creatArea();
-
-
-    use = 1;
+    use = true;
 }
 
+// Функция возврата координат
 function returnCoordinate() {
     startCoordinate = [];
     finishCoordinate = [];
 }
 
+// Функция удаления визуализации A_star
 function deleteVisualizationA_star() {
     deleteField();
     deleteButtonClear();
@@ -279,70 +283,123 @@ function deleteVisualizationA_star() {
     deleteSliderSize();
     deleteImgStart();
     deleteImgFinish();
-    deleteColor();
+    deleteGenerationMapButton();
     returnCoordinate();
     deleteColorTrace();
-    deleteGenerationMapButton();
-    use = 0;
+    deleteColorUser();
+    deleteColorBorder();
 }
 
-function manageA_star(functionName) {
-    if (!use && firstUse) {
-        createVisualizationA_star(functionName);
-        document.getElementById('startButton').addEventListener("click", () => {
-            clearField();
-            drawMapByMatrix(matrixA_star);
-            launch(document.getElementById('startButton').value)
-        });
-        firstUse = false;
-    } else if (!use && !firstUse) {
-        deleteVisualizationA_star();
-        createVisualizationA_star();
-    } else {
-        deleteVisualizationA_star();
-        firstUse = true;
+// Функция создания визуализации Ant
+function createVisualizationAnt(functionName) {
+    createField();
+    createButtonClear();
+    createButtonStart(functionName);
+    createSliderSize();
+    createColorTrace();
+    createColorUser();
+    creatArea(functionName);
+}
+
+// Функция удаления визуализации Ant
+function deleteVisualizationAnt() {
+    deleteField();
+    deleteButtonClear();
+    deleteButtonStart();
+    deleteSliderSize();
+    returnCoordinate();
+    deleteColorTrace();
+    deleteColorUser();
+}
+
+// Функция управления
+function manage(functionName) {
+    if (!use) {
+        switch (functionName) {
+            case ('AStar'):
+                createVisualizationA_star(functionName);
+                lastFunction = deleteVisualizationA_star;
+                break;
+            case ('ant'):
+                createVisualizationAnt(functionName);
+                lastFunction = deleteVisualizationAnt;
+        }
+        use = true;
+        lastId = functionName;
+        console.log(lastFunction + ' ' + use + ' ' + lastId + ';')
+    } else if (use && lastId === functionName) {
+        lastFunction();
+        use = false;
+        lastId = undefined;
+        console.log(lastFunction + ' ' + use + ' ' + lastId + ';')
+    } else if (use && lastId !== functionName) {
+        lastFunction();
+        switch (functionName) {
+            case ('AStar'):
+                createVisualizationA_star(functionName);
+                lastFunction = deleteVisualizationA_star;
+                break
+            case ('ant'):
+                createVisualizationAnt(functionName);
+                lastFunction = deleteVisualizationAnt;
+                break;
+        }
+        lastId = functionName;
+        console.log(lastFunction + ' ' + use + ' ' + lastId + ';')
     }
 }
 
-function drawMapByMatrix(matrix) {
-    let canvas = document.getElementById('fieldCanvas');
-    let canvasField = canvas.getContext('2d');
-    let slider = document.getElementById('slider');
-    for (let i = 0; i < col; i++)
-        for (let j = 0; j < row; j++)
-            if (matrix[i][j] === 1) {
-                canvasField.fillRect(j * slider.value, i * slider.value, slider.value, slider.value);
-            }
-}
-
-function clearField() {
-    let canvas = document.getElementById('fieldCanvas');
-    let canvasField = canvas.getContext('2d');
-    canvasField.clearRect(0, 0, canvas.width, canvas.height);
-}
 
 function launch(functionName) {
     switch (functionName) {
         case ('AStar'):
+            // Проверяем, установлены ли старт и финиш
             if (startCoordinate[0] === undefined && finishCoordinate[0] === undefined)
                 alert('Вы не установили старт и финиш');
+            // Проверяем, установлен ли старт
             else if (startCoordinate[0] === undefined)
                 alert('Вы не установили старт');
+            // Проверяем, установлен ли финиш
             else if (finishCoordinate[0] === undefined)
-                alert('Вы не установили финиш');
+                alert('Вы не установили финиш' + finishCoordinate[0]);
+            // Проверяем, находится ли старт в пределах поля
             else if (startCoordinate[0] > row - 1 || startCoordinate[1] > col - 1 || startCoordinate[0] < 0
                 || startCoordinate[1] < 0)
-                alert('установите старт на поле' + col + ' : ' + row);
-
+                alert('установите старт на поле');
+            // Проверяем, находится ли финиш в пределах поля
             else if (finishCoordinate[0] > row - 1 || finishCoordinate[1] > col - 1 || finishCoordinate[0] < 0
                 || finishCoordinate[1] < 0)
                 alert('установите финиш на поле');
             else {
+                // Запускаем алгоритм A* и получаем результат
                 let result = aStarSearch(matrixA_star, [startCoordinate[1], startCoordinate[0]], [finishCoordinate[1], finishCoordinate[0]]);
-                console.log(matrixA_star);
-                console.log(result);
-                managePath(result);
+                // Проверяем, совпадают ли начальная и конечная точки с установленными
+                if (result[0][0] !== startCoordinate [0]
+                    || result[0][1] !== startCoordinate [1]
+                    || result[result.length - 1][0] !== finishCoordinate[0]
+                    || result[result.length - 1][1] !== finishCoordinate[1])
+                    alert("нельзя простроить путь");
+                else managePath(result); // Управляем путем
+
             }
+            break;
+        case('ant'):
+            // Проверяем, добавлены ли города
+            if (points.length === 0)
+                alert('Добавьте города');
+            // Проверяем, добавлено ли достаточное количество городов
+            else if (points.length === 1)
+                alert('Вы добавили слишком мало городов');
+            else {
+                // Запускаем алгоритм муравьиной колонии и получаем результат
+                const {bestPath, shortestDistance} = antColonyOptimization(points, 5, 100, 1, 0.5, 100);
+                // Преобразуем индексы в координаты
+                let array = bestPath.map(index => points[index]);
+                console.log("Shortest Path:", array); // Выводим кратчайший путь
+                console.log("Shortest Distance:", shortestDistance); // Выводим кратчайшее расстояние
+                createPath(array); // Создаем путь
+            }
+            break;
 
     }
 }
