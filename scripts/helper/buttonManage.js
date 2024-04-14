@@ -234,8 +234,31 @@ function createNumInput(){
     num.style.backgroundColor='#778edc';
     num.id='numField';
     num.type='text';
+    num.placeholder ='Count clusters';
     num.style.left = '5%';
     num.style.top='45%';
+    num.style.position = 'absolute';
+    document.body.append(num);
+
+}function createEpsilonInput(){
+    let num = document.createElement('input');
+    num.style.backgroundColor='#778edc';
+    num.id='epsilon';
+    num.type='text';
+    num.placeholder ='Epsilon';
+    num.style.left = '5%';
+    num.style.top='50%';
+    num.style.position = 'absolute';
+    document.body.append(num);
+
+}function createPointInNeighborhoodInput(){
+    let num = document.createElement('input');
+    num.style.backgroundColor='#778edc';
+    num.id='pointInNeighborhood';
+    num.type='text';
+    num.placeholder ='Neighborhood';
+    num.style.left = '5%';
+    num.style.top='55%';
     num.style.position = 'absolute';
     document.body.append(num);
 
@@ -243,6 +266,13 @@ function createNumInput(){
 function createTower(){
     let tower = document.createElement('img');
 
+}
+
+function deleteEpsilonInput(){
+    document.getElementById('epsilon').remove();
+}
+function deletePointInNeighborhoodInput() {
+    document.getElementById('pointInNeighborhood').remove();
 }
 function deleteNumInput(){
     document.getElementById('numField').remove();
@@ -318,6 +348,8 @@ function createVisualizationCluster(functionName){
     createColorUser();
     createColorTrace();
     createNumInput();
+    createEpsilonInput();
+    createPointInNeighborhoodInput();
     creatArea(functionName);
 }
 
@@ -369,6 +401,8 @@ function deleteVisualizationCluster(){
     returnCoordinate();
     deleteColorUser();
     deleteNumInput();
+    deleteEpsilonInput();
+    deletePointInNeighborhoodInput();
     deleteColorTrace();
 }
 
@@ -484,8 +518,11 @@ function launch(functionName){
             break;
         case ('cluster'):
             let num = document.getElementById('numField').value;
-
+            let eps = document.getElementById('epsilon').value;
+            let neighborhood = document.getElementById('pointInNeighborhood').value;
             KMean(num,points);
+            dbscan_naive(points,eps,neighborhood,getEuclideanDistance);
+            hierarchicalClustering(points,num,getEuclideanDistance);
             break;
         case ('neuralNetwork'):
             setup();

@@ -183,7 +183,6 @@ function creatArea(functionName) {
 function manageCluster(canvas,canvasField,slider,color)
 {
     matrixUpdate(canvas,canvasField,slider,color);
-    console.log(color + 'manageCluster');
     getPoint();
     launch(document.getElementById('startButton').value);
 }
@@ -469,7 +468,7 @@ function deleteBlock(event,canvasField,slider,canvas){
 
     let correctX = matrixX * slider.value;
     let correctY = matrixY * slider.value;
-    canvasField.fillStyle = '#fff8dc';
+    canvasField.fillStyle = '#7c0518';
     console.log(canvas.style.backgroundColor + " event");
     canvasField.fillRect(correctX, correctY, slider.value, slider.value);
     matrixA_star[matrixY][matrixX] = 0;
@@ -559,4 +558,19 @@ function createMatrix(canvas,slider) {
         }
     }
 
+}
+
+function managePathOfClustering(array,color ="#88d915",offsetOfX = 0,offsetOfY =0,ratioX = 1,ratioY = 1){
+    let canvas = document.getElementById('fieldCanvas');
+    let slider = document.getElementById('slider');
+    let canvasField = canvas.getContext('2d');
+    canvasField.fillStyle = color;
+    for(let i =0;i<array.length;i++)
+        canvasField.fillRect(array[i][0]*slider.value + offsetOfX*slider.value,
+            array[i][1]*slider.value + offsetOfY*slider.value,
+            slider.value * ratioX, slider.value * ratioY);
+}
+
+function getEuclideanDistance(firstPoint,secondPoint){
+    return ((secondPoint[0]-firstPoint[0])**2 + (secondPoint[1]-firstPoint[1])**2)**(1/2);
 }
