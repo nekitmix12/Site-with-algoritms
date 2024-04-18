@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="../../scripts/algorithms/cluster/DBSCAN.js"></script>
+    <script src="../../scripts/algorithms/cluster/hierarchicalClustering.js"></script>
+    <script src="../../scripts/algorithms/A_starAlgorithm.js"></script>
+    <script src="../../scripts/algorithms/AntColonyAlgorithm.js"  ></script>
+    <script src="../../scripts/algorithms/cluster/clustering.js"></script>
+    <script src="../managers/buttonManager.js"></script>
+    <script src="../../scripts/helper/visualization.js"></script>
+    <script src="../../scripts/helper/generateMap.js"></script>
+
+    <link rel="stylesheet" href="../designs/style.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+
+<div id="centered-text">
+    Эти алгоритмы просто космос
+</div>
+<button id="centered-button">
+    О проекте
+</button>
+<div id="project-info">
+    <p>Привет!</p>
+    <p>Это проект, выполненный в рамках обучения на программе HITs!</p>
+    <p>Здесь представлены различные алгоритмы, нажми на кнопки сверху, чтобы ознакомиться с ними!</p>
+    <p>Над проектом работали</p>
+    <ul>
+        <li>Верховский Никита</li>
+        <li>Горохов Денис</li>
+        <li>Скажутин Никита</li>
+    </ul>
+</div>
+<script>
+    document.getElementById('centered-button').addEventListener('click', function () {
+        var projectInfo = document.getElementById('project-info');
+        var centeredButton = document.getElementById('centered-button');
+        var centeredText = document.getElementById('centered-text');
+        if (projectInfo.style.display === 'none') {
+            projectInfo.style.display = 'block';
+            centeredButton.style.display = 'none';
+            centeredText.style.display = 'none';
+        } else {
+            projectInfo.style.display = 'none';
+            centeredButton.style.display = 'block';
+            centeredText.style.display = 'block';
+        }
+    });
+
+    document.getElementById('project-info').addEventListener('click', function () {
+        this.style.display = 'none';
+        document.getElementById('centered-button').style.display = 'block';
+        document.getElementById('centered-text').style.display = 'block';
+    });
+</script>
+<div id="menu">
+    <button class="star" id="AStarButton"> А-звезда</button>
+    <button class="ant"  id="antButton">Муравьиный алгоритм</button>
+    <button class="dna">Генетический алгоритм</button>
+    <button class="cluster" id="clusterButton">Алгоритм кластеризации</button>
+    <button class="ai" id="neuralNetworkButton">Нейронная сеть</button>
+    <button class="tree" id="treeButton">Дерево решений</button>
+</div>
+<footer>
+    <u>made by HITs students 2024</u>
+</footer>
+</html>

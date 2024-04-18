@@ -1,0 +1,91 @@
+* {
+    user-select: none;
+}
+body {
+    background-color: rgb(227, 227, 227);
+}
+.highlight {
+    background-color: #F2A104;
+}
+button {
+    display: block;
+    width: 100px;
+    height: 40px;
+    margin: 20px auto;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+#menu button {
+    background-color: transparent;
+    display: inline-block;
+    color: #fff;
+    border: 0;
+    padding: 10vh 1vh;
+    font-size: 2vw;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    cursor: pointer;
+    z-index: 3;
+    height: 5vh;
+    width: auto;
+    transition: all 0.3s ease;
+}
+#menu button:hover {
+    transform: scale(1.2);
+    border-color: #0366d6;
+}
+
+#canvasContainer {
+    position: relative;
+    width: 75%;
+    height: 500px;
+    margin: 40px auto;
+    border: 1px solid black;
+}
+
+#canvas {
+    background-color: black;
+    position: relative;
+    margin: 30px auto 30px 30px;
+    display: inline-block;
+}
+
+button {
+    display: block;
+    width: 100px;
+    height: 40px;
+    margin: 20px auto;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+.elem {
+    display: inline-block;
+    margin: auto;
+    vertical-align: middle;
+}
+
+#values {
+    margin-left: 50px;
+}
+
+.digit {
+    display: inline-block;
+    font-size:24px;
+    margin: 0;
+}
+
+
+.valdiv {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}

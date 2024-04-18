@@ -124,7 +124,7 @@ function creatArea(functionName) {
             canvas.addEventListener('mousedown',(event)=>
                 draw(event,canvas,canvasField,slider,colorUser.value));
             break;
-        case ('neuralNetwork'):
+        case ('hits'):
             canvas = document.getElementById('fieldCanvasForNeuralNetwork');
             buttonClear = document.getElementById('clearButton');
             startButton = document.getElementById('startButton');

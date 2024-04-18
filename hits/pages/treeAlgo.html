@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang = 'ru'>
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" href="../designs/treeStyle.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+<div id="menu">
+    <button class="star" id="AStarButton"> А-звезда</button>
+    <button class="ant"  id="antButton">Муравьиный алгоритм</button>
+    <button class="dna">Генетический алгоритм</button>
+    <button class="cluster" id="clusterButton">Алгоритм кластеризации</button>
+    <button class="ai" id="neuralNetworkButton">Нейронная сеть</button>
+</div>
+<div class="back">
+
+</div>
+
+<div class="wrapper" id="wrapper">
+        <div class="tree" id="tree">
+            <ul id="root">
+
+            </ul>
+    </div>
+    <div class="buttonContainer">
+        <label class="label" for='file_input'>Загрузить файл</label>
+        <button id="getFile_button"> Построить дерево</button>
+        <button id="start_button">Старт</button>
+        <button id="reset_button"> Очистить</button>
+        <button id="optimize_button">Оптимизировать(бонус)</button>
+        <input id="file_input" type="file">
+
+        <div class="textbox">
+            <textarea id="inputData" name="input_data" cols="40" rows="5"></textarea>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="../../scripts/algorithms/tree/TreeAlgorithm.js"></script>
+<script src = '../managers/treeAlgorithmManager.js'></script>
+</body>
+</html>
