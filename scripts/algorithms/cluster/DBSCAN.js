@@ -1,69 +1,69 @@
-function dbscan_naive(P, eps, m, distance) {
-    let NOISE = 0
-    let C = 0
+function dbscan_naive(Points, epsilon, numPointInR, distance) {
+    let Noise = 0
+    let ClusterNumber = 0
 
-    let visited_points = new Set();
-    let clustered_points = new Set();
+    let visitedPoints = new Set();
+    let clusteredPoints = new Set();
     let clusters = {};
 
-    clusters[NOISE]=[];
+    clusters[Noise]=[];
 
-    function region_query(p) {
+    function region_query(tempPoint) {
 
         let array = [];
 
-        for(let i =0;i<P.length;i++) {
-            if (distance(P[i], p) < eps)
-                array[array.length] = P[i];
+        for(let i =0;i<Points.length;i++) {
+            if (distance(Points[i], tempPoint) < epsilon)
+                array[array.length] = Points[i];
         }
         return array;
     }
 
     function expand_cluster(p, neighbours) {
-        console.log(clusters[C]===undefined);
-        if (clusters[C]===undefined)
-            clusters[C] = [];
+        console.log(clusters[ClusterNumber]===undefined);
+        if (clusters[ClusterNumber]===undefined)
+            clusters[ClusterNumber] = [];
 
-        clusters[C][clusters[C].length]=p
-        clustered_points.add(p)
+        clusters[ClusterNumber][clusters[ClusterNumber].length]=p
+        clusteredPoints.add(p)
         while (neighbours.length!==0) {
             let q = neighbours.pop();
-            for(let i = 0 ;i<visited_points.length;i++)
-                console.log(visited_points[i]);
-            if (!(visited_points.has(q))) {
-                visited_points.add(q);
+            for(let i = 0 ;i<visitedPoints.length;i++)
+                console.log(visitedPoints[i]);
+            if (!(visitedPoints.has(q))) {
+                visitedPoints.add(q);
                 let neighbourz = region_query(q);
-                if (neighbourz.length > m)
+                if (neighbourz.length > numPointInR)
                     neighbours= concatForMatrix(neighbourz, neighbours);
                 console.log(neighbours);
             }
-            if (!(clustered_points.has(q))) {
-                clustered_points.add(q);
-                clusters[C][clusters[C].length] =q;
-                if (clusters[NOISE].indexOf(q)!==-1)
-                    clusters[NOISE].splice(clusters[NOISE].indexOf(q),clusters[NOISE].indexOf(q));
-                console.log(clusters[NOISE]);
+            if (!(clusteredPoints.has(q))) {
+                clusteredPoints.add(q);
+                clusters[ClusterNumber][clusters[ClusterNumber].length] =q;
+                if (clusters[Noise].indexOf(q)!==-1)
+                    clusters[Noise].splice(clusters[Noise].indexOf(q),clusters[Noise].indexOf(q));
+                console.log(clusters[Noise]);
             }
         }
     }
 
-    for (let i = 0;i<P.length;i++) {
-        let p = P[i];
+    for (let i = 0;i<Points.length;i++) {
+        let tempPoint = Points[i];
 
-        if (visited_points.has(p)) {
+        if (visitedPoints.has(tempPoint)) {
             continue;
         }
 
-        visited_points.add(p);
+        visitedPoints.add(tempPoint);
 
-        let neighbours = region_query(p);
+        let neighbours = region_query(tempPoint);
 
-        if (neighbours.length < m)
-            clusters[NOISE][clusters[NOISE].length]=p;
+        if (neighbours.length < numPointInR)
+            clusters[Noise][clusters[Noise].length]=tempPoint;
         else {
-            C += 1;
+            ClusterNumber += 1;
 
-            expand_cluster(p, neighbours);
+            expand_cluster(tempPoint, neighbours);
         }
 
 
@@ -72,8 +72,6 @@ function dbscan_naive(P, eps, m, distance) {
 
    drawByDictionaryWithRandomColor(clusters,0,0.5,1,0.5)
 //    drawByDictionaryWithRandomColor(clusters)
-    console.log('===========')
-    console.log(clusters);
     return clusters;
 }
 
