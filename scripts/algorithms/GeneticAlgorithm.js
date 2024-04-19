@@ -19,7 +19,7 @@
                 let offsetY = dy * 10 / distance;
 
                 context.moveTo(vertX + offsetX, vertY + offsetY);
-                context.lineTo(clientX, clientY);
+                //context.lineTo(clientX, clientY);
                 context.strokeStyle = "rgba(235,235,235,0.5)";
                 context.stroke();
             });
@@ -56,6 +56,18 @@
             context.stroke();
         }
     }
+
+function arraysEqual(a, b) {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) return false;
+    }
+    return true;
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 // Функция для перемешивания массива
     function shuffleArray(array) {
@@ -137,7 +149,7 @@
             const [i, j] = twoRandomNumbers(1, chromosomeLength - 1);
             [child[i], child[j]] = [child[j], child[i]];
         }
-
+        child.push(child[0]);
         return child;
     }
 
@@ -164,6 +176,18 @@
         points = [];
     }
 
+    function deletePath() {
+        let canvas =document.getElementById("fieldCanvas");
+        let context = canvas.getContext("2d");
+        context.clearRect(0, 0,  canvas.width, canvas.height);
+
+        for (let i = 0; i < points.length; i++) {
+            context.beginPath();
+            context.arc(points[i][0], points[i][1], 15, 0, 2 * Math.PI, false);
+            context.fill();
+        }
+    }
+
 // Функция для ожидания заданного времени
     async function waitAsync(time) {
         return new Promise(resolve => setTimeout(resolve, time));
@@ -186,10 +210,13 @@
         let finish = 5;
 
         // Основной цикл генетического алгоритма
-        for (let i = 0; i < 10000; ++i) {
+        for (let i = 0; i < 10000; i++) {
+            console.log("Generation: ", i);
             // Уменьшаем размер популяции до изначального
             population = population.slice(0, points.length * points.length);
-
+            drawPath(bestChromosome, 'red');
+            await sleep(1);
+            deletePath();
             // Создаем новое поколение потомков
             for (let j = 0; j < points.length * points.length; ++j) {
                 const index1 = randomNumber(0, population.length - 1);
@@ -206,7 +233,7 @@
             population.sort((a, b) => a[a.length - 1] - b[b.length - 1]);
 
             // Если нашли лучшую хромосому, обновляем bestChromosome и сбрасываем счетчик finish
-            if (JSON.stringify(bestChromosome) !== JSON.stringify(population[0])) {
+            if (!arraysEqual(bestChromosome, population[0])) {
                 bestChromosome = population[0].slice();
                 finish = 5;
             }
