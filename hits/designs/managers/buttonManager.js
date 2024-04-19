@@ -143,9 +143,8 @@ function createField() {
 
     //значени для изменения размера поля
     let xOffset = 600;
-    let yOffset = 100;// header height
+    let yOffset = 250;// header height
 
-    //200 для того чтоб одинакого хорошо работал и с
     field.width = Math.ceil((window.innerWidth - xOffset) / 10) * 10;
     field.height = Math.ceil((window.innerHeight - yOffset) / 10) * 10;
     field.style.left = '20%   ';
@@ -202,7 +201,7 @@ function createSliderSize() {
 function createImgStart() {
     let imgStart = document.createElement('img');
     imgStart.id = 'startImg';
-    imgStart.src = '../resources/russia-svgrepo-com.svg'
+    imgStart.src = '../designs/resources/russia-svgrepo-com.svg'
     imgStart.style.width = '10px';
     imgStart.style.position = 'absolute';
     imgStart.style.top = '35%';
@@ -215,7 +214,7 @@ function createImgStart() {
 function createImgFinish() {
     let imgFinish = document.createElement('img');
     imgFinish.id = 'finishImg';
-    imgFinish.src = '../resources/china-svgrepo-com.svg'
+    imgFinish.src = '../designs/resources/china-svgrepo-com.svg'
     imgFinish.style.width = '10px';
     imgFinish.style.position = 'absolute';
     imgFinish.style.top = '35%';
@@ -529,8 +528,8 @@ function manage(functionName) {
                 lastFunction = deleteVisualizationCluster;
                 break;
             case ('hits'):
-                createVisualizationNeuralNetwork(functionName);
-                lastFunction = deleteVisualizationNeuralNetwork;
+                //createVisualizationNeuralNetwork(functionName);
+                //lastFunction = deleteVisualizationNeuralNetwork;
                 break;
         }
         lastId = functionName;
@@ -544,14 +543,14 @@ function launch(functionName) {
     switch (functionName) {
         case ('AStar'):
             if (startCoordinate[0] === undefined && finishCoordinate[0] === undefined)
-                alert('Вы не установили старт и финиш');
+                alert('Вы не установили старт и финиш' + col + " " + row);
             else if (startCoordinate[0] === undefined)
                 alert('Вы не установили старт');
             else if (finishCoordinate[0] === undefined)
                 alert('Вы не установили финиш' + finishCoordinate[0]);
             else if (startCoordinate[0] > row - 1 || startCoordinate[1] > col - 1 || startCoordinate[0] < 0
                 || startCoordinate[1] < 0)
-                alert('установите старт на поле');
+                alert('установите старт на поле'+ col + " " + row);
 
             else if (finishCoordinate[0] > row - 1 || finishCoordinate[1] > col - 1 || finishCoordinate[0] < 0
                 || finishCoordinate[1] < 0)
@@ -563,7 +562,10 @@ function launch(functionName) {
                     || result[result.length - 1][0] !== finishCoordinate[0]
                     || result[result.length - 1][1] !== finishCoordinate[1])
                     alert("незля простороить путь");
-                else managePath(result);
+                else {
+                    console.log(result);
+                    managePath(result);
+                }
 
             }
             break;

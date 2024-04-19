@@ -407,23 +407,28 @@ function createPointWithDeleteLate(array) {
     canvasField.closePath();
 }
 
-function managePath(array) {
+function managePath(array,iter = 0) {
     let canvas = document.getElementById('fieldCanvas');
     let traceColor = document.getElementById('traceColor');
     let slider = document.getElementById('slider');
     let img = document.createElement('img');
     let canvasField = canvas.getContext('2d');
-    img.src = 'resources/penguin-svgrepo-com.svg';
+    img.src = '../../hits/designs/resources/forAStar/bomb-1-svgrepo-com.svg';
     img.style.position = 'absolute';
     canvasField.fillStyle = traceColor.value;
-
+    console.log(iter);
 
     img.onload = () => {
-        for (let i = 0; i < array.length - 1; i++) {
-            canvasField.fillRect(array[i][0] * slider.value, array[i][1] * slider.value, slider.value, slider.value);
-            createPicture(img, array[i][0] * slider.value, array[i][1] * slider.value, canvasField, slider.value);
-            console.log(array);
-        }
+        if(iter>0)canvasField.fillRect(array[iter-1][0] * slider.value, array[iter-1][1] * slider.value,
+            slider.value, slider.value);
+
+        canvasField.fillRect(array[iter][0] * slider.value, array[iter][1] * slider.value,
+                slider.value, slider.value);
+        createPicture(img, array[iter][0] * slider.value, array[iter][1] * slider.value,
+                canvasField, slider.value);
+
+        if(iter < array.length - 1)setTimeout(managePath,50,array,iter+1);
+
     }
 }
 
