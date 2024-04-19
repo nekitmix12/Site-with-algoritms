@@ -555,7 +555,7 @@ function launch(functionName){
             break;
         case ('genetic'):
             console.log("OK");
-            clearPath();
+            deletePath();
             geneticAlgorithm();
             break;
     }
