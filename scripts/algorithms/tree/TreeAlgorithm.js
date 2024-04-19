@@ -178,6 +178,119 @@ function doubleDecision(currentNode, array) {
 
 function chooseSplittingParameter(matrix) {
 
+    function createFeatureDict(j, matrix, celSet, currValue) {
+        let featureDict = {};
+        featureDict["isDouble"] = isDouble(j);
+        featureDict["entropy"] = undefined;
+        featureDict["value"] = currValue;
+
+        if (featureDict["isDouble"] === true) {
+            handleDoubleFeatureDict(featureDict, j, matrix);
+        } else {
+            handleNonDoubleFeatureDict(featureDict, j, matrix, celSet);
+        }
+
+        return featureDict;
+    }
+
+    function handleDoubleFeatureDict(featureDict, j, matrix) {
+        let doubleResult = doubleData(j);
+        featureDict["entropy"] = doubleResult["entropy"];
+
+        if (featureDict["entropy"] !== 999) {
+            let leftName = "<" + doubleResult["splittingParameter"],
+                rightName = ">=" + doubleResult["splittingParameter"];
+
+            featureDict["arrays"] = [];
+            featureDict["arrays"][leftName] = {"array": []};
+            featureDict["arrays"][rightName] = {"array": []};
+
+            let il = 0, ir = 0;
+
+            for (let i = 1; i < matrix.length; i++) {
+                if (i === doubleResult["indexes"]["leftIndexes"][il] + 1) {
+                    featureDict["arrays"][leftName]["array"].push(matrix[i]);
+                    ++il;
+                } else {
+                    featureDict["arrays"][rightName]["array"].push(matrix[i]);
+                    ++ir;
+                }
+            }
+
+            if (featureDict["arrays"][leftName]["array"].length < 2) {
+                featureDict["arrays"].splice(leftName, 1);
+            }
+
+            if (featureDict["arrays"][rightName]["array"].length < 2) {
+                featureDict["arrays"].splice(rightName, 1);
+            }
+
+            featureDict["arrays"][leftName]["array"].splice(0, 0, matrix[0]);
+            featureDict["arrays"][rightName]["array"].splice(0, 0, matrix[0]);
+        }
+    }
+
+    function handleNonDoubleFeatureDict(featureDict, j, matrix, celSet) {
+        featureDict["entropy"] = 0;
+        featureDict["arrays"] = [];
+
+        for (let i = 1; i < matrix.length; i++) {
+            let featureVal = matrix[i][j];
+            let celVal = matrix[i][matrix[0].length - 1];
+
+            if (featureDict["arrays"][featureVal] === undefined) {
+                let celDict = {};
+
+                for (let val of celSet) {
+                    celDict[val] = 0;
+                }
+
+                celDict["array"] = [];
+                featureDict["arrays"][featureVal] = celDict;
+            }
+
+            featureDict["arrays"][featureVal][celVal] += 1;
+            let neededArray = new Array(matrix[i].length);
+
+            for (let k = 0; k < matrix[i].length; k++) {
+                neededArray[k] = matrix[i][k];
+            }
+
+            neededArray.splice(j, 1);
+
+            featureDict["arrays"][featureVal]["array"].push(neededArray);
+        }
+
+        let neededArray = new Array(matrix[0].length);
+
+        for (let k = 0; k < matrix[0].length; k++) {
+            neededArray[k] = matrix[0][k];
+        }
+
+        neededArray.splice(j, 1);
+
+        for (let featureVal in featureDict["arrays"]) {
+            featureDict["arrays"][featureVal]["array"].splice(0, 0, neededArray);
+        }
+
+        featureDict["entropy"] += stringEntropy(j, featureDict);
+    }
+
+    function findFinalDecisionMaker(featuresList) {
+        let finalEntropy = 1000;
+        let finalDecisionMaker = undefined;
+
+        for (let feature in featuresList) {
+            if (featuresList[feature]["data"]["entropy"] < finalEntropy) {
+                finalEntropy = featuresList[feature]["data"]["entropy"];
+                finalDecisionMaker = featuresList[feature];
+            }
+        }
+
+        return finalDecisionMaker;
+    }
+
+
     let featuresList = {};
 
     for (let i = 1; i < matrix.length; i++) {
@@ -187,117 +300,11 @@ function chooseSplittingParameter(matrix) {
     let currValue = decisionValue();
 
     for (let j = 0; j < matrix[0].length - 1; j++) {
-
-        let featureDict = {};
-
-        featureDict["isDouble"] = (isDouble(j));
-        featureDict["entropy"] = undefined;
-        featureDict["value"] = currValue;
-
-        if (featureDict["isDouble"] === true) {
-
-            let doubleResult = doubleData(j);
-
-            featureDict["entropy"] = doubleResult["entropy"];
-
-            if (featureDict["entropy"] !== 999) {
-
-                let leftName = "<" + doubleResult["splittingParameter"],
-                    rightName = ">=" + doubleResult["splittingParameter"];
-
-                featureDict["arrays"] = [];
-                featureDict["arrays"][leftName] = {"array": []};
-                featureDict["arrays"][rightName] = {"array": []};
-
-                let il = 0, ir = 0;
-
-                for (let i = 1; i < matrix.length; i++) {
-
-                    if (i === doubleResult["indexes"]["leftIndexes"][il] + 1) {
-                        featureDict["arrays"][leftName]["array"].push(matrix[i]);
-                        ++il;
-                    } else {
-                        featureDict["arrays"][rightName]["array"].push(matrix[i]);
-                        ++ir;
-                    }
-                }
-
-                if (featureDict["arrays"][leftName]["array"].length < 2) {
-                    featureDict["arrays"].splice(leftName, 1);
-                }
-
-                if (featureDict["arrays"][rightName]["array"].length < 2) {
-                    featureDict["arrays"].splice(rightName, 1);
-                }
-
-                featureDict["arrays"][leftName]["array"].splice(0, 0, matrix[0]);
-                featureDict["arrays"][rightName]["array"].splice(0, 0, matrix[0]);
-            }
-        } else {
-
-            featureDict["entropy"] = 0;
-            featureDict["arrays"] = [];
-
-            for (let i = 1; i < matrix.length; i++) {
-
-                let featureVal = matrix[i][j];
-                let celVal = matrix[i][matrix[0].length - 1];
-
-                if (featureDict["arrays"][featureVal] === undefined) {
-
-                    let celDict = {};
-
-                    for (let val of celSet) {
-                        celDict[val] = 0;
-                    }
-
-                    celDict["array"] = [];
-                    featureDict["arrays"][featureVal] = celDict;
-                }
-
-                featureDict["arrays"][featureVal][celVal] += 1;
-                let neededArray = new Array(matrix[i].length);
-
-                for (let k = 0; k < matrix[i].length; k++) {
-                    neededArray[k] = matrix[i][k];
-                }
-
-                neededArray.splice(j, 1);
-
-                featureDict["arrays"][featureVal]["array"].push(neededArray);
-            }
-
-            let neededArray = new Array(matrix[0].length);
-
-            for (let k = 0; k < matrix[0].length; k++) {
-                neededArray[k] = matrix[0][k];
-            }
-
-            neededArray.splice(j, 1);
-
-            for (let featureVal in featureDict["arrays"]) {
-                featureDict["arrays"][featureVal]["array"].splice(0, 0, neededArray);
-            }
-
-            featureDict["entropy"] += stringEntropy(j, featureDict);
-        }
-
+        let featureDict = createFeatureDict(j, matrix, celSet, currValue);
         featuresList[matrix[0][j]] = {"data": featureDict, "feature": matrix[0][j]};
     }
 
-    let finalEntropy = 1000;
-    let finalDecisionMaker = undefined;
-
-    for (let feature in featuresList) {
-
-        if (featuresList[feature]["data"]["entropy"] < finalEntropy) {
-            finalEntropy = featuresList[feature]["data"]["entropy"];
-            finalDecisionMaker = featuresList[feature];
-        }
-
-    }
-
-    return finalDecisionMaker;
+    return findFinalDecisionMaker(featuresList);
 
     function getBaseLog(base, num) {
 
