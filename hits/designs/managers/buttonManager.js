@@ -555,16 +555,12 @@ function launch(functionName) {
             break;
         case('ant'):
 
-            if (points.length === 0)
+            if(points.length ===0)
                 alert('Добавьте города');
-            else if (points.length === 1)
+            else if (points.length ===1)
                 alert('Вы добавили слишком мало городов');
             else {
-                const {bestPath, shortestDistance} = antColonyOptimization(points, 5, 100, 1, 0.5, 100);
-                let array = bestPath.map(index => points[index]);
-                console.log("Shortest Path:", array);
-                console.log("Shortest Distance:", shortestDistance);
-                createPath(array);
+                antAlgorithm(points);
             }
             break;
         case ('cluster'):

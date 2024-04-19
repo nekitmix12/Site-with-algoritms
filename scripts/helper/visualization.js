@@ -89,26 +89,22 @@ function creatArea(functionName) {
             traceColor = document.getElementById('traceColor');
             canvasField = canvas.getContext('2d');
 
-            traceColor.addEventListener('input', () => {
-                traceColor = this.value;
-            });
+            traceColor.addEventListener('input',()=> {
+                traceColor = this.value;}) ;
             console.log(traceColor.value);
             startButton.addEventListener("click", () => {
-                manageStartAnt(canvas, canvasField, slider, colorUser.value);
-            });
+                manageStartAnt(canvas,canvasField,slider,colorUser.value);});
 
-            slider.addEventListener('input', () => {
-                sliderManegeAnt(slider, canvasField, canvas)
-            });
+            slider.addEventListener('input', ()=>{
+                sliderManegeAnt(slider,canvasField,canvas)});
 
-            buttonClear.addEventListener("click", () => {
-                buttonClearManege(canvas, slider, canvasField)
-            });
+            buttonClear.addEventListener("click",()=>{
+                buttonClearManege(canvas,slider,canvasField)});
 
-            createMatrix(canvas, slider);
+            createMatrix(canvas,slider);
 
-            canvas.addEventListener('mousedown', (event) =>
-                draw(event, canvas, canvasField, slider, colorUser.value));
+            canvas.addEventListener('mousedown',(event)=>
+                draw(event,canvas,canvasField,slider,colorUser.value));
             break;
         case ('cluster'):
             canvas = document.getElementById('fieldCanvas');
