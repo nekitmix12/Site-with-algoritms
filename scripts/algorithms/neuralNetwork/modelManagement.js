@@ -385,12 +385,11 @@ const CELL_COUNT = 50;
 const CELL_SIZE = 10;
 const width = CELL_SIZE * CELL_COUNT;
 const height = CELL_SIZE * CELL_COUNT;
-const PEN_SIZE = 20;
+const PEN_SIZE = 18;
 
 const context = canvas.getContext("2d", {willReadFrequently: true});
 context.imageSmoothingEnabled = true;
 context.imageSmoothingQuality = "high";
-
 canvas.height = height;
 canvas.width = width;
 
@@ -508,7 +507,7 @@ function main() {
 
     for (let i = 0; i < outputs.length; i++) {
 
-        let div = document.getElementById("digval_" + i.toString());
+        let div = document.getElementById("digitValue" + i.toString());
         div.textContent = `${(outputs[i]*100).toFixed(2)}%`;
     }
     highlightMaxValue();
