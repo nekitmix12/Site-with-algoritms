@@ -34,8 +34,11 @@ function creatArea(functionName) {
             traceColor = document.getElementById('traceColor');
             colorUser = document.getElementById('colorUser');
             borderGeneration = document.getElementById('generationMap');
+            buttonBlock = document.getElementById('buttonBlock');
             canvasField = canvas.getContext('2d');
 
+
+            buttonBlock.addEventListener("click",()=>work = false)
             borderColor.addEventListener('input', changeColorBorder);
 
             borderColor.addEventListener('input', () =>
@@ -408,6 +411,7 @@ function createPointWithDeleteLate(array) {
 }
 
 function managePath(array,iter = 0) {
+    if(!work)return;
     let canvas = document.getElementById('fieldCanvas');
     let traceColor = document.getElementById('traceColor');
     let slider = document.getElementById('slider');
@@ -427,9 +431,13 @@ function managePath(array,iter = 0) {
         createPicture(img, array[iter][0] * slider.value, array[iter][1] * slider.value,
                 canvasField, slider.value);
 
-        if(iter < array.length - 1)setTimeout(managePath,50,array,iter+1);
+        if(iter < array.length - 1)
+            setTimeout(managePath, 50, array, iter + 1);
 
     }
+    //img.src = '../../hits/designs/resources/forAStar/explosion-bomb-svgrepo-com.svg';
+    if(!work)return;
+
 }
 
 function createPath(array,isBestRoute = false){

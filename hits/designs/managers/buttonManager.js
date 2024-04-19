@@ -393,6 +393,7 @@ function createVisualizationA_star(functionName) {
     createColorUser();
     createColorTrace();
     createColorBorder();
+    createButtonBlock();
 
     creatArea(functionName);
 
@@ -441,6 +442,7 @@ function deleteVisualizationA_star() {
     deleteColorTrace();
     deleteColorUser();
     deleteColorBorder();
+    deleteButtonBlock();
 
 }
 
