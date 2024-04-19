@@ -7,7 +7,7 @@
     <script src="../../scripts/algorithms/A_starAlgorithm.js"></script>
     <script src="../../scripts/algorithms/AntColonyAlgorithm.js"  ></script>
     <script src="../../scripts/algorithms/cluster/clustering.js"></script>
-    <script src="../managers/buttonManager.js"></script>
+    <script src="../designs/managers/buttonManager.js"></script>
     <script src="../../scripts/helper/visualization.js"></script>
     <script src="../../scripts/helper/generateMap.js"></script>
 
@@ -35,28 +35,6 @@
         <li>Скажутин Никита</li>
     </ul>
 </div>
-<script>
-    document.getElementById('centered-button').addEventListener('click', function () {
-        const projectInfo = document.getElementById('project-info');
-        const centeredButton = document.getElementById('centered-button');
-        const centeredText = document.getElementById('centered-text');
-        if (projectInfo.style.display === 'none') {
-            projectInfo.style.display = 'block';
-            centeredButton.style.display = 'none';
-            centeredText.style.display = 'none';
-        } else {
-            projectInfo.style.display = 'none';
-            centeredButton.style.display = 'block';
-            centeredText.style.display = 'block';
-        }
-    });
-
-    document.getElementById('project-info').addEventListener('click', function () {
-        this.style.display = 'none';
-        document.getElementById('centered-button').style.display = 'block';
-        document.getElementById('centered-text').style.display = 'block';
-    });
-</script>
 <div id="menu">
     <button class="star" id="AStarButton"> А-звезда</button>
     <button class="ant"  id="antButton">Муравьиный алгоритм</button>

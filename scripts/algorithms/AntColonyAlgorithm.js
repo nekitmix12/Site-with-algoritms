@@ -20,8 +20,8 @@ function initializeDistances(coordinates) {
 
 // Функция для инициализации матрицы феромонов
 function initializePheromones(numCities, initialValue) {
-    return Array.from({ length: numCities }, () =>
-        Array.from({ length: numCities }, () => initialValue)
+    return Array.from({length: numCities}, () =>
+        Array.from({length: numCities}, () => initialValue)
     );
 }
 
@@ -81,7 +81,7 @@ function antColonyOptimization(coordinates, numAnts, numIterations, initialPhero
 
     for (let iteration = 0; iteration < numIterations; iteration++) {
         const pheromones = initializePheromones(numCities, initialPheromone);
-        const ants = Array.from({ length: numAnts }, () => {
+        const ants = Array.from({length: numAnts}, () => {
             const startCityIndex = Math.floor(Math.random() * numCities);
             const path = [startCityIndex];
             const visited = new Set([startCityIndex]);
@@ -97,7 +97,7 @@ function antColonyOptimization(coordinates, numAnts, numIterations, initialPhero
                 visited.add(nextCityIndex);
             }
             distance += distances[path[path.length - 1]][path[0]]; // Добавляем расстояние до начального города
-            return { path, distance };
+            return {path, distance};
         });
 
         const bestAnt = ants.reduce((best, current) => current.distance < best.distance ? current : best, ants[0]);
@@ -110,5 +110,5 @@ function antColonyOptimization(coordinates, numAnts, numIterations, initialPhero
         updatePheromones(pheromones, ants, evaporationRate, maxPheromone);
     }
 
-    return { bestPath, shortestDistance };
+    return {bestPath, shortestDistance};
 }

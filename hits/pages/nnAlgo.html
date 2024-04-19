@@ -1,39 +1,32 @@
 <!DOCTYPE html>
-<html lang = "ru">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <script src="../../hits/managers/nnAlgorithmManager.js" type="text/javascript" defer></script>
+    <script src="../designs/managers/nnAlgorithmManager.js" type="text/javascript" defer></script>
     <script src="../../scripts/algorithms/neuralNetwork/model.js" type="text/javascript" defer></script>
     <script src="../../scripts/algorithms/neuralNetwork/modelManagement.js" type="text/javascript" defer></script>
 
 
     <link rel="stylesheet" href="../designs/neuralStyle.css">
-
+    <title></title>
 </head>
 
 <body>
 <div id="menu">
     <button class="star" id="AStarButton"> А-звезда</button>
-    <button class="ant"  id="antButton">Муравьиный алгоритм</button>
+    <button class="ant" id="antButton">Муравьиный алгоритм</button>
     <button class="dna">Генетический алгоритм</button>
     <button class="cluster" id="clusterButton">Алгоритм кластеризации</button>
     <button class="tree" id="treeButton">Дерево решений</button>
 </div>
 
-    <div class="elem">
-        <canvas id="canvas"></canvas>
-        <canvas id="scaled_canvas" hidden="hidden"></canvas>
-    </div>
+<div class="elem">
+    <canvas id="canvas"></canvas>
+    <canvas id="scaled_canvas" hidden="hidden"></canvas>
+</div>
 
-    <div class="elem" id="values">
-    </div>
+<div class="elem" id="values"></div>
 
-<button id="reset">Reset</button>
-
-<script>
-
-
-</script>
-
+<button id="reset">Очистить</button>
 </body>
 </html>

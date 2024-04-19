@@ -6,7 +6,7 @@ class PriorityQueue {
 
     // метод для добавления элемента в очередь с приоритетом
     put(item, priority) {
-        this.elements.push({ item, priority });
+        this.elements.push({item, priority});
         // сортировка элементов по приоритету
         this.elements.sort((a, b) => a.priority - b.priority);
     }
@@ -36,10 +36,10 @@ function aStarSearch(grid, start, goal) {
     ];
 
     // функция для создания ноды
-    const node = (x, y) => ({ x, y });
+    const node = (x, y) => ({x, y});
 
     // функция для создания ключа ноды
-    const nodeKey = ({ x, y }) => `${x}-${y}`;
+    const nodeKey = ({x, y}) => `${x}-${y}`;
 
     // функция для проверки возможности прохода через клетку
     const isWalkable = (x, y) => grid[x][y] === 0 || grid[x][y] === 3;

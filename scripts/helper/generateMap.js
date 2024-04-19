@@ -7,8 +7,8 @@
  Аргументы: width, height - ширина и длина карты, freeRatio - отношение свободных/всех клеток. */
 
 function generateMaze(width, height, freeRatio) {
-    const maze = Array.from({ length: height }, () =>
-        Array.from({ length: width }, () => 1));
+    const maze = Array.from({length: height}, () =>
+        Array.from({length: width}, () => 1));
 
     const walls = [];
     const addWalls = (x, y) => {

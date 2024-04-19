@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html lang = 'ru'>
+<html lang='ru'>
 <head>
     <meta charset="UTF-8"/>
     <link rel="stylesheet" href="../designs/treeStyle.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+
 </head>
 
 <body>
 <div id="menu">
     <button class="star" id="AStarButton"> А-звезда</button>
-    <button class="ant"  id="antButton">Муравьиный алгоритм</button>
+    <button class="ant" id="antButton">Муравьиный алгоритм</button>
     <button class="dna">Генетический алгоритм</button>
     <button class="cluster" id="clusterButton">Алгоритм кластеризации</button>
     <button class="ai" id="neuralNetworkButton">Нейронная сеть</button>
@@ -19,10 +21,8 @@
 </div>
 
 <div class="wrapper" id="wrapper">
-        <div class="tree" id="tree">
-            <ul id="root">
-
-            </ul>
+    <div class="tree" id="tree">
+        <ul id="root"></ul>
     </div>
     <div class="buttonContainer">
         <label class="label" for='file_input'>Загрузить файл</label>
@@ -37,10 +37,7 @@
         </div>
     </div>
 </div>
-
-
-
 <script src="../../scripts/algorithms/tree/TreeAlgorithm.js"></script>
-<script src = '../managers/treeAlgorithmManager.js'></script>
+<script src='../designs/managers/treeAlgorithmManager.js'></script>
 </body>
 </html>

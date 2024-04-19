@@ -1,8 +1,18 @@
 * {
+    color: white;
     user-select: none;
 }
 body {
-    background-color: rgb(227, 227, 227);
+    background-image: url('resources/nnBackground.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
 }
 .highlight {
     background-color: #F2A104;
@@ -36,20 +46,27 @@ button {
     transform: scale(1.2);
     border-color: #0366d6;
 }
-
+#menu, .elem, #values {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 #canvasContainer {
     position: relative;
-    width: 75%;
-    height: 500px;
-    margin: 40px auto;
+    width: 100%;
+    height: 70%;
+    margin-right: auto;
+    margin-left: auto;
     border: 1px solid black;
+    justify-content: center;
 }
 
 #canvas {
     background-color: black;
     position: relative;
-
-    margin: 30px auto 30px 30px;
+    border: 2px solid #ffffff;
+    border-radius: 5px;
     display: inline-block;
 }
 
@@ -69,13 +86,14 @@ button:hover {
     background-color: #0056b3;
 }
 .elem {
-    display: inline-block;
-    margin: auto;
-    vertical-align: middle;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 #values {
-    margin-left: 50px;
+    margin: auto;
 }
 
 .digit {
@@ -83,10 +101,15 @@ button:hover {
     font-size:24px;
     margin: 0;
 }
-
+.label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 .valueOfDiv {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin: auto;
 }

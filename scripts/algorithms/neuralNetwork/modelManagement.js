@@ -5,12 +5,12 @@ const HIDDEN_LAYER_1 = 225;
 const HIDDEN_LAYER_2 = 225;
 
 let index = 0;
-let t_index = 0;
+let tIndex = 0;
 
-let fetched_images = undefined;
-let fetched_labels = undefined;
-let test_images = undefined;
-let test_labels = undefined;
+let fetchedImages = undefined;
+let fetchedLabels = undefined;
+let testImages = undefined;
+let testLabels = undefined;
 
 
 class Matrix {
@@ -63,7 +63,7 @@ class Matrix {
     }
 
 
-    static el_multiply(m1, m2) {
+    static element_multiply(m1, m2) {
         let result = new Matrix(m1.rows, m1.cols);
         result.data = result.data.map((row, i) => row.map((val, j) => m1.data[i][j] * m2.data[i][j]));
         return result;
@@ -117,47 +117,34 @@ function normalize(x) {
 
 class NeuralNetwork {
 
-    constructor(inputLength, HD1_length, HD2_length, outputLength, data = null) {
+    constructor(inputLength, firstHDLength, secondHDLength, outputLength, data = null) {
 
 
-        this.weights_IN_HD1 = new Matrix(HD1_length, inputLength);
-        this.weights_HD1_HD2 = new Matrix(HD2_length, HD1_length);
-        this.weights_HD2_OUT = new Matrix(outputLength, HD2_length);
+        this.weightsFromInputToFirstHD = new Matrix(firstHDLength, inputLength);
+        this.weightsFromFirstHDToSecond = new Matrix(secondHDLength, firstHDLength);
+        this.weightsFromSecondHDToOutput = new Matrix(outputLength, secondHDLength);
 
 
-        this.bias_HD1 = new Matrix(HD1_length, 1);
-        this.bias_HD2 = new Matrix(HD2_length, 1);
-        this.bias_OUT = new Matrix(outputLength, 1);
+        this.biasFirstHD = new Matrix(firstHDLength, 1);
+        this.biasSecondHD = new Matrix(secondHDLength, 1);
+        this.biasOutput = new Matrix(outputLength, 1);
 
         if (data === null) {
-
-
-            this.weights_IN_HD1.randomize();
-            this.weights_HD1_HD2.randomize();
-            this.weights_HD2_OUT.randomize();
-            this.bias_HD1.randomize();
-            this.bias_HD2.randomize();
-            this.bias_OUT.randomize();
-
+            this.weightsFromInputToFirstHD.randomize();
+            this.weightsFromFirstHDToSecond.randomize();
+            this.weightsFromSecondHDToOutput.randomize();
+            this.biasFirstHD.randomize();
+            this.biasSecondHD.randomize();
+            this.biasOutput.randomize();
         } else {
-
-
-            this.weights_IN_HD1.fill(data[0][0]);
-            this.weights_HD1_HD2.fill(data[0][1]);
-            this.weights_HD2_OUT.fill(data[0][2]);
-            this.bias_HD1.fill(data[1][0]);
-            this.bias_HD2.fill(data[1][1]);
-            this.bias_OUT.fill(data[1][2]);
-
+            this.weightsFromInputToFirstHD.fill(data[0][0]);
+            this.weightsFromFirstHDToSecond.fill(data[0][1]);
+            this.weightsFromSecondHDToOutput.fill(data[0][2]);
+            this.biasFirstHD.fill(data[1][0]);
+            this.biasSecondHD.fill(data[1][1]);
+            this.biasOutput.fill(data[1][2]);
         }
-
-
-        this.lr = 0.01; // Установка скорости обучения
-    }
-
-    applyDropout(layer) {
-        layer.map(val => Math.random() < this.dropoutRate ? 0 : val); // Применение dropout к слою (уже нет)
-        return layer;
+        this.lr = 0.01; 
     }
 
     processLayer(weights, inputs, bias) {
@@ -169,7 +156,7 @@ class NeuralNetwork {
 
     adjustWeights(weights, errors, outputs, inputs) {
         outputs.map(dsigmoid); // Применение производной функции активации
-        let gradient = Matrix.el_multiply(errors, outputs); // Вычисление градиента
+        let gradient = Matrix.element_multiply(errors, outputs); // Вычисление градиента
         gradient.scale(this.lr); // Масштабирование градиента с учетом скорости обучения
         let inputs_T = Matrix.transpose(inputs); // Транспонирование входов
         let deltas = Matrix.multiply(gradient, inputs_T); // Вычисление дельт
@@ -180,11 +167,11 @@ class NeuralNetwork {
         let inputs = Matrix.fromArray(inputsArray); // Преобразование входного массива в матрицу
         inputs.map(normalize); // Нормализация входов
 
-        let HD1 = this.processLayer(this.weights_IN_HD1, inputs, this.bias_HD1); // Обработка первого скрытого слоя
+        let HD1 = this.processLayer(this.weightsFromInputToFirstHD, inputs, this.biasFirstHD); // Обработка первого скрытого слоя
 
-        let HD2 = this.processLayer(this.weights_HD1_HD2, HD1, this.bias_HD2); // Обработка второго скрытого слоя
+        let HD2 = this.processLayer(this.weightsFromFirstHDToSecond, HD1, this.biasSecondHD); // Обработка второго скрытого слоя
 
-        let outputs = this.processLayer(this.weights_HD2_OUT, HD2, this.bias_OUT); // Обработка выходного слоя
+        let outputs = this.processLayer(this.weightsFromSecondHDToOutput, HD2, this.biasOutput); // Обработка выходного слоя
 
         return Matrix.toArray(outputs); // Преобразование выходов в массив
     }
@@ -192,34 +179,34 @@ class NeuralNetwork {
     train(inputsArray, desiredArray) {
         let inputs = Matrix.fromArray(inputsArray); // Преобразование входного массива в матрицу
         inputs.map(normalize); // Нормализация входов
-        let HD1 = this.processLayer(this.weights_IN_HD1, inputs, this.bias_HD1); // Обработка первого скрытого слоя
-        let HD2 = this.processLayer(this.weights_HD1_HD2, HD1, this.bias_HD2); // Обработка второго скрытого слоя
-        let outputs = this.processLayer(this.weights_HD2_OUT, HD2, this.bias_OUT); // Обработка выходного слоя
+        let HD1 = this.processLayer(this.weightsFromInputToFirstHD, inputs, this.biasFirstHD); // Обработка первого скрытого слоя
+        let HD2 = this.processLayer(this.weightsFromFirstHDToSecond, HD1, this.biasSecondHD); // Обработка второго скрытого слоя
+        let outputs = this.processLayer(this.weightsFromSecondHDToOutput, HD2, this.biasOutput); // Обработка выходного слоя
 
         let desired = Matrix.fromArray(desiredArray); // Преобразование желаемого массива в матрицу
         let outputErrors = Matrix.subtract(desired, outputs); // Вычисление ошибок выходного слоя
 
-        let weights_HD2_OUT_T = Matrix.transpose(this.weights_HD2_OUT); // Транспонирование весов от второго скрытого слоя к выходному слою
+        let weights_HD2_OUT_T = Matrix.transpose(this.weightsFromSecondHDToOutput); // Транспонирование весов от второго скрытого слоя к выходному слою
         let HD2_errors = Matrix.multiply(weights_HD2_OUT_T, outputErrors); // Вычисление ошибок второго скрытого слоя
 
-        let weights_HD1_HD2_T = Matrix.transpose(this.weights_HD1_HD2); // Транспонирование весов от первого скрытого слоя ко второму скрытому слою
+        let weights_HD1_HD2_T = Matrix.transpose(this.weightsFromFirstHDToSecond); // Транспонирование весов от первого скрытого слоя ко второму скрытому слою
         let HD1_errors = Matrix.multiply(weights_HD1_HD2_T, HD2_errors); // Вычисление ошибок первого скрытого слоя
 
-        this.weights_HD2_OUT = this.adjustWeights(this.weights_HD2_OUT, outputErrors, outputs, HD2); // Обновление весов от второго скрытого слоя к выходному слою
-        this.weights_HD1_HD2 = this.adjustWeights(this.weights_HD1_HD2, HD2_errors, HD2, HD1); // Обновление весов от первого скрытого слоя ко второму скрытому слою
-        this.weights_IN_HD1 = this.adjustWeights(this.weights_IN_HD1, HD1_errors, HD1, inputs); // Обновление весов от входного слоя к первому скрытому слою
+        this.weightsFromSecondHDToOutput = this.adjustWeights(this.weightsFromSecondHDToOutput, outputErrors, outputs, HD2); // Обновление весов от второго скрытого слоя к выходному слою
+        this.weightsFromFirstHDToSecond = this.adjustWeights(this.weightsFromFirstHDToSecond, HD2_errors, HD2, HD1); // Обновление весов от первого скрытого слоя ко второму скрытому слою
+        this.weightsFromInputToFirstHD = this.adjustWeights(this.weightsFromInputToFirstHD, HD1_errors, HD1, inputs); // Обновление весов от входного слоя к первому скрытому слою
     }
 
     get data() {
         let weights = [];
         weights.push(
-            this.weights_IN_HD1.data,
-            this.weights_HD1_HD2.data,
-            this.weights_HD2_OUT.data
+            this.weightsFromInputToFirstHD.data,
+            this.weightsFromFirstHDToSecond.data,
+            this.weightsFromSecondHDToOutput.data
         ); // Сбор данных о весах
 
         let biases = [];
-        biases.push(this.bias_HD1.data, this.bias_HD2.data, this.bias_OUT.data); // Сбор данных о сдвигах
+        biases.push(this.biasFirstHD.data, this.biasSecondHD.data, this.biasOutput.data); // Сбор данных о сдвигах
 
         let data = [];
         data.push(weights, biases); // Объединение данных о весах и сдвигах
@@ -228,34 +215,35 @@ class NeuralNetwork {
     }
 }
 
-function request(req) {
-    if (req === 'reset') {
+function sendRequest(request) {
+    if (request === 'reset') {
         index = 0; // Сброс индекса
-        t_index = 0; // Сброс тестового индекса
+        tIndex = 0; // Сброс тестового индекса
         return;
     }
 
-    if (req === 'train') {
-        let val = JSON.stringify([fetched_images[index], fetched_labels[index]]); // Получение обучающих данных
-        ++index; // Увеличение индекса
+    if (request === 'train') {
+        let val = JSON.stringify([fetchedImages[index], fetchedLabels[index]]); // Получение обучающих данных
+        ++index;
         return val;
     }
 
-    if (req === 'test') {
-        let val = JSON.stringify([test_images[t_index], test_labels[t_index]]); // Получение тестовых данных
-        t_index++; // Увеличение тестового индекса
+    if (request === 'test') {
+        let val = JSON.stringify([testImages[tIndex], testLabels[tIndex]]); // Получение тестовых данных
+        ++tIndex;
         return val;
     }
 }
-function resize(image){
+
+function resize(image) { // это плохо, я знаю
 
     let newImage = [];
 
-    for (let i = 0; i < 50; ++i){
+    for (let i = 0; i < 50; ++i) {
 
         let row = [];
 
-        for (let j = 0; j < 50; ++j){
+        for (let j = 0; j < 50; ++j) {
 
             let srcI = Math.round(28 / 50 * i);
             let srcJ = Math.round(28 / 50 * j);
@@ -297,58 +285,55 @@ async function trainModel() {
 
     const startTime = process.hrtime();
 
-    let images_path = "/Users/nikitaskazutin/Downloads/Site-with-Algorithms-clone/resources/json/train-images.json";
-    let labels_path = "/Users/nikitaskazutin/Downloads/Site-with-Algorithms-clone/resources/json/train-labels.json";
-    let test_images_path = "/Users/nikitaskazutin/Downloads/Site-with-Algorithms-clone/resources/json/test-images.json";
-    let test_labels_path = "/Users/nikitaskazutin/Downloads/Site-with-Algorithms-clone/resources/json/test-labels.json";
+    let trainImagesPath = "/Users/nikitaskazutin/Downloads/Site-with-Algorithms-clone/resources/json/train-images.json";
+    let trainLabelsPath = "/Users/nikitaskazutin/Downloads/Site-with-Algorithms-clone/resources/json/train-labels.json";
+    let testImagesPath = "/Users/nikitaskazutin/Downloads/Site-with-Algorithms-clone/resources/json/test-images.json";
+    let testLabelsPath = "/Users/nikitaskazutin/Downloads/Site-with-Algorithms-clone/resources/json/test-labels.json";
 
-    fetched_images = await readFile(images_path);
-    fetched_labels = await readFile(labels_path);
-    test_images = await readFile(test_images_path);
-    test_labels = await readFile(test_labels_path);
-    fetched_images = JSON.parse(fetched_images);
-    fetched_labels = JSON.parse(fetched_labels);
-    test_images = JSON.parse(test_images);
-    test_labels = JSON.parse(test_labels);
+    fetchedImages = await readFile(trainImagesPath);
+    fetchedLabels = await readFile(trainLabelsPath);
+    testImages = await readFile(testImagesPath);
+    testLabels = await readFile(testLabelsPath);
+    fetchedImages = JSON.parse(fetchedImages);
+    fetchedLabels = JSON.parse(fetchedLabels);
+    testImages = JSON.parse(testImages);
+    testLabels = JSON.parse(testLabels);
 
 
-    let nn = new NeuralNetwork(IMG_DIMENSIONS, HIDDEN_LAYER_1, HIDDEN_LAYER_2, 10);
+    let neuralNetwork = new NeuralNetwork(IMG_DIMENSIONS, HIDDEN_LAYER_1, HIDDEN_LAYER_2, 10);
 
     for (let i = 0; i < 60000; i++) {
 
-        let data = JSON.parse(request('train'));
+        let data = JSON.parse(sendRequest('train'));
         let input = data[0];
         let desired = Array(10).fill(0);
         desired[data[1]] = 1;
 
         input = resize(input);
 
-        nn.train(input, desired);
+        neuralNetwork.train(input, desired);
 
         console.log("Epoch: " + (i + 1) + ", " + process.hrtime(startTime)[0] + "s elapsed");
 
     }
 
-    let correct = 0;
+    let numberOfCorrect = 0;
 
     for (let i = 0; i < 10000; ++i) {
 
-        let data = JSON.parse(request('test'));
+        let data = JSON.parse(sendRequest('test'));
         let inputs = data[0];
         let desired = Array(10).fill(0);
         desired[data[1]] = 1;
 
         inputs = resize(inputs);
 
-
-
-        let outputs = nn.feedForward(inputs);
+        let outputs = neuralNetwork.feedForward(inputs);
 
         let temp = outputs[0];
         let guess = 0;
 
         for (let j = 0; j < outputs.length; j++) {
-
             if (outputs[j] > temp) {
                 temp = outputs[j];
                 guess = j;
@@ -358,19 +343,19 @@ async function trainModel() {
         let target = desired.indexOf(1);
 
         if (guess === target) {
-            ++correct;
+            ++numberOfCorrect;
         }
 
 
         console.log("Test: " + (i + 1) + ", " + process.hrtime(startTime)[0] + "s elapsed");
     }
-    let accuracy = correct / 5000;
+    let accuracy = numberOfCorrect / 5000;
 
     console.log(`Accuracy: ${accuracy * 100}%`);
 
     await inputIntoJson(
         "/Users/nikitaskazutin/Downloads/Site-with-Algorithms-clone/resources/json/anotherModel3.json",
-        JSON.stringify(nn.data)
+        JSON.stringify(neuralNetwork.data)
     );
 }
 
@@ -380,7 +365,7 @@ let modelData = model;
 
 
 const canvas = document.getElementById("canvas");
-const resetButton = document.getElementById("reset");
+document.getElementById("reset");
 const CELL_COUNT = 50;
 const CELL_SIZE = 10;
 const width = CELL_SIZE * CELL_COUNT;
@@ -407,8 +392,7 @@ function endDrawing() {
 }
 
 function componentToHex(c) {
-    const hex = c.toString(16);
-    return hex.length === 1 ? "0" + hex : hex;
+    return c.toString(16).padStart(2, '0');
 }
 
 function rgbToHex(r, g, b) {
@@ -416,48 +400,53 @@ function rgbToHex(r, g, b) {
 }
 
 function draw(elem) {
+    if (!drawing || elem.button !== 0) return;
 
-    if (drawing) {
+    const canvasBounding = canvas.getBoundingClientRect();
+    const x = elem.clientX - canvasBounding.left;
+    const y = elem.clientY - canvasBounding.top;
+    const calcX = x + CELL_SIZE / 2;
+    const calcY = y + CELL_SIZE / 2;
 
-        if (elem.button !== 0) {
-            return;
-        }
+    for (let currX = x - PEN_SIZE; currX <= x + PEN_SIZE; currX += CELL_SIZE) {
+        for (let currY = y - PEN_SIZE; currY <= y + PEN_SIZE; currY += CELL_SIZE) {
+            const cellX = currX + CELL_SIZE / 2;
+            const cellY = currY + CELL_SIZE / 2;
+            const dist = Math.sqrt(Math.pow(cellX - calcX, 2) + Math.pow(cellY - calcY, 2));
 
-        const canvasBounding = canvas.getBoundingClientRect();
-        const x = elem.clientX - canvasBounding.left;
-        const y = elem.clientY - canvasBounding.top;
+            if (dist < PEN_SIZE) {
+                const p = context.getImageData(cellX - CELL_SIZE / 2, cellY - CELL_SIZE / 2, 1, 1);
+                const color = rgbToHex(
+                    Math.max(Math.min(Math.floor(255 - (Math.sqrt(dist / PEN_SIZE) * 255)) + p.data[0], 255), p.data[0]),
+                    Math.max(Math.min(Math.floor(255 - (Math.sqrt(dist / PEN_SIZE) * 255)) + p.data[1], 255), p.data[1]),
+                    Math.max(Math.min(Math.floor(255 - (Math.sqrt(dist / PEN_SIZE) * 255)) + p.data[2], 255), p.data[2])
+                );
 
-        for (let currX = x - PEN_SIZE; currX <= x + PEN_SIZE; currX += CELL_SIZE) {
-            for (let currY = y - PEN_SIZE; currY <= y + PEN_SIZE; currY += CELL_SIZE) {
+                const boundedCellX = Math.min(Math.max(Math.floor(currX / CELL_SIZE), 0), width);
+                const boundedCellY = Math.min(Math.max(Math.floor(currY / CELL_SIZE), 0), height);
 
-                let cellX = currX + CELL_SIZE / 2;
-                let cellY = currY + CELL_SIZE / 2;
-
-                const calcX = x + CELL_SIZE / 2;
-                const calcY = y + CELL_SIZE / 2;
-
-                const dist = Math.sqrt(Math.pow(cellX - calcX, 2) + Math.pow(cellY - calcY, 2));
-
-                if (dist < PEN_SIZE) {
-
-                    let p = context.getImageData(cellX - CELL_SIZE / 2, cellY - CELL_SIZE / 2, 1, 1);
-
-                    let color = rgbToHex(
-                        Math.max(Math.min(Math.floor(255 - (Math.sqrt(dist / PEN_SIZE) * 255)) + p.data[0], 255), p.data[0]),
-                        Math.max(Math.min(Math.floor(255 - (Math.sqrt(dist / PEN_SIZE) * 255)) + p.data[1], 255), p.data[1]),
-                        Math.max(Math.min(Math.floor(255 - (Math.sqrt(dist / PEN_SIZE) * 255)) + p.data[2], 255), p.data[2])
-                    );
-
-
-                    cellX = Math.min(Math.max(Math.floor(currX / CELL_SIZE), 0), width);
-                    cellY = Math.min(Math.max(Math.floor(currY / CELL_SIZE), 0), height);
-
-                    fillCell(cellX, cellY, color);
-
-                }
+                fillCell(boundedCellX, boundedCellY, color);
             }
         }
     }
+}
+
+function processImageDataAndPredict() {
+    const {data} = getImageData();
+    const image = Array.from({length: data.length / 4}, (_, i) => data[i * 4]);
+
+    const input = convertTo2D(image, 50);
+    const inputs = centralizeAndMagnify(input);
+
+    const nn = new NeuralNetwork(IMG_DIMENSIONS, HIDDEN_LAYER_1, HIDDEN_LAYER_2, 10, modelData);
+    const outputs = nn.feedForward(inputs);
+
+    outputs.forEach((output, i) => {
+        const div = document.getElementById("digitValue" + i);
+        div.textContent = `${(output * 100).toFixed(2)}%`;
+    });
+
+    highlightMaxValue();
 }
 
 function fillCell(cellX, cellY, color) {
@@ -472,17 +461,17 @@ canvas.addEventListener("mousedown", startDrawing);
 canvas.addEventListener("mouseup", endDrawing);
 canvas.addEventListener("mousemove", draw);
 
-const s_canvas = document.getElementById("scaled_canvas");
-s_canvas.width = 50;
-s_canvas.height = 50;
-const scaledContext = s_canvas.getContext("2d");
+const miniCanvas = document.getElementById("scaled_canvas");
+miniCanvas.width = 50;
+miniCanvas.height = 50;
+const scaledContext = miniCanvas.getContext("2d");
 
 function scale() {
     scaledContext.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, 50, 50);
 }
 
 function getImageData() {
-    return scaledContext.getImageData(0, 0, s_canvas.width, s_canvas.height);
+    return scaledContext.getImageData(0, 0, miniCanvas.width, miniCanvas.height);
 }
 
 document.getElementById("reset").addEventListener("click", () => {
@@ -499,7 +488,7 @@ function main() {
         image.push(value);
     }
 
-    let input = convertTo2D(image,50);
+    let input = convertTo2D(image, 50);
     let inputs = centralizeAndMagnify(input);
 
     let nn = new NeuralNetwork(IMG_DIMENSIONS, HIDDEN_LAYER_1, HIDDEN_LAYER_2, 10, modelData);
@@ -508,13 +497,14 @@ function main() {
     for (let i = 0; i < outputs.length; i++) {
 
         let div = document.getElementById("digitValue" + i.toString());
-        div.textContent = `${(outputs[i]*100).toFixed(2)}%`;
+        div.textContent = `${(outputs[i] * 100).toFixed(2)}%`;
     }
     highlightMaxValue();
 }
 
 main();
-function closerImage(input, flag) {
+
+function magnifyImage(input, flag) {
     let result = {startX: input[0].length, endX: -1, startY: input.length, endY: -1};
     for (let i = 0; i < input.length; ++i) {
         for (let j = 0; j < input[0].length; ++j) {
@@ -529,38 +519,42 @@ function closerImage(input, flag) {
     return result;
 }
 
-function findCenterMass(input) {
-    let result = {x: 0, y: 0};
-    let sumX = 0;
-    let sumY = 0;
-    let sumPixels = 0;
+function calculateCenterOfMass(image) {
+    let centerOfMass = {x: 0, y: 0};
+    let weightedSumX = 0;
+    let weightedSumY = 0;
+    let totalPixelValue = 0;
 
-    for (let i = 0; i < input.length; ++i) {
-        for (let j = 0; j < input[0].length; ++j) {
-            let pixel = input[i][j];
-            sumPixels += pixel;
-            sumY += i * pixel;
-            sumX += j * pixel;
+
+    for (let rowIndex = 0; rowIndex < image.length; ++rowIndex) {
+        for (let columnIndex = 0; columnIndex < image[0].length; ++columnIndex) {
+            let pixelValue = image[rowIndex][columnIndex];
+            totalPixelValue += pixelValue;
+            weightedSumY += rowIndex * pixelValue;
+            weightedSumX += columnIndex * pixelValue;
         }
     }
-    result.y = Math.round( sumY/sumPixels);
-    result.x = Math.round(sumX/sumPixels);
-    return result;
+
+    centerOfMass.y = Math.round(weightedSumY / totalPixelValue);
+    centerOfMass.x = Math.round(weightedSumX / totalPixelValue);
+
+    return centerOfMass;
 }
-function convertTo2D(input,size){
+
+function convertTo2D(input, size) {
     let result = [];
-    for(let i = 0 ; i < size;++i){
+    for (let i = 0; i < size; ++i) {
         result[i] = [];
-        for(let j = 0 ; j < size; ++j){
-            result[i][j] = input[i*size+j];
+        for (let j = 0; j < size; ++j) {
+            result[i][j] = input[i * size + j];
         }
     }
     return result;
 }
 
 function centralizeAndMagnify(input) {
-    let imageEdges = closerImage(input, 0.01);
-    let massCenter = findCenterMass(input);
+    let imageEdges = magnifyImage(input, 0.01);
+    let massCenter = calculateCenterOfMass(input);
 
     let canvasCopy = document.createElement("canvas");
     canvasCopy.width = input[0].length;
@@ -569,25 +563,26 @@ function centralizeAndMagnify(input) {
     let copyContext = canvasCopy.getContext("2d");
     let scaling = 40 / Math.max(imageEdges.endX + 1 - imageEdges.startX, imageEdges.endY + 1 - imageEdges.startY);
 
-    copyContext.translate(s_canvas.width / 2, s_canvas.height / 2);
+    copyContext.translate(miniCanvas.width / 2, miniCanvas.height / 2);
     copyContext.scale(scaling, scaling);
-    copyContext.translate(-s_canvas.width / 2, -s_canvas.height / 2);
-    copyContext.translate(25-massCenter.x, 25-massCenter.y);
-    copyContext.drawImage(s_canvas, 0, 0);
-    let { data } = copyContext.getImageData(0,0,s_canvas.width,s_canvas.height);
+    copyContext.translate(-miniCanvas.width / 2, -miniCanvas.height / 2);
+    copyContext.translate(25 - massCenter.x, 25 - massCenter.y);
+    copyContext.drawImage(miniCanvas, 0, 0);
+    let {data} = copyContext.getImageData(0, 0, miniCanvas.width, miniCanvas.height);
 
     scaledContext.fillStyle = 'black';
-    scaledContext.fillRect(0,0,50,50);
-    scaledContext.drawImage(canvasCopy,0,0);
+    scaledContext.fillRect(0, 0, 50, 50);
+    scaledContext.drawImage(canvasCopy, 0, 0);
 
     let image = [];
-    for(let i = 0 ;i < data.length; i+=4){
+    for (let i = 0; i < data.length; i += 4) {
 
         image.push(data[i]);
     }
     canvasCopy.remove();
     return image;
 }
+processImageDataAndPredict();
 function resetCanvas() {
     context.fillStyle = 'black';
     context.fillRect(0, 0, canvas.width, canvas.height);

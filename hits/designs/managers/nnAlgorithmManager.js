@@ -40,7 +40,7 @@ for (let i = 0; i < 10; i++) {
     valuesDiv.appendChild(valDiv);
 
 }
-function removeHighlight(){
+function removeHighlight() {
     for (let i = 0; i < 10; i++) {
         document.getElementById("digitValue" + i).classList.remove('highlight');
     }
@@ -58,9 +58,7 @@ function highlightMaxValue() {
             maxElem = elem;
         }
     }
-
-  removeHighlight()
-
+    removeHighlight()
     if (maxElem) {
         maxElem.classList.add('highlight');
     }
