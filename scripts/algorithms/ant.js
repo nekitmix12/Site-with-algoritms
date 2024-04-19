@@ -3,6 +3,7 @@ let pheromoneMatrix = [];
 
 async function ACO(pointMatrix, numIterations = 100, evaporationRate =1, Alpha = 1, Beta = 1, q=0.6) {
     //задаем количество "муравьев"
+
     let numAnts = pointMatrix.length;
 
     //изменяем точки в матрицу смежности
@@ -24,6 +25,7 @@ async function ACO(pointMatrix, numIterations = 100, evaporationRate =1, Alpha =
 
     //находим лучший путь благодаря итерациям
     for (let iter = 0; iter < numIterations; iter++) {
+        if(!work)return ;
         //создание матрицы ферамонов для каждого муравья
         const antPheromoneMatrix = [];
         for (let i = 0; i < numAnts; i++) {
@@ -32,6 +34,7 @@ async function ACO(pointMatrix, numIterations = 100, evaporationRate =1, Alpha =
 
         // поиск муравьями, каждый мураве стартует с новой точки
         for (let ant = 0; ant < numAnts; ant++) {
+            if(!work)return ;
             const path = [];
             const visited = new Set();
             let current =ant;
@@ -40,6 +43,7 @@ async function ACO(pointMatrix, numIterations = 100, evaporationRate =1, Alpha =
 
 
             for (let i = 0; i < distanceMatrix.length - 1; i++) {
+                if(!work)return ;
                 //здесь мы высчитываем вероятность появления события(МКН привет), заводим массив под частные события и вычисляем сначала сумму а потом каждое делим на сумму
                 const probabilities = [];
                 let denominator = 0;
@@ -89,7 +93,7 @@ async function ACO(pointMatrix, numIterations = 100, evaporationRate =1, Alpha =
             // обновляем ферамоны для последних точек
             antPheromoneMatrix[ant][path[path.length - 1]][path[0]] += q / distanceMatrix[path[path.length - 1]][path[0]];
             antPheromoneMatrix[ant][path[0]][path[path.length - 1]] += q / distanceMatrix[path[path.length - 1]][path[0]];
-
+            if(!work)return ;
             // добавляем в матрицу испарнение
             for (let i = 0; i < antPheromoneMatrix[ant].length; i++) {
                 for (let j = 0; j < antPheromoneMatrix[ant][i].length; j++) {
@@ -115,6 +119,7 @@ async function ACO(pointMatrix, numIterations = 100, evaporationRate =1, Alpha =
                 pheromoneMatrix[i][j] = (1 - evaporationRate) * pheromoneMatrix[i][j] + sum;
             }
         }
+        if(!work)return ;
     }
 
     console.log(bestTour);
@@ -122,14 +127,6 @@ async function ACO(pointMatrix, numIterations = 100, evaporationRate =1, Alpha =
     return [bestTour, bestTourLength];
 }
 
-function convertNumberInCoodinate(bestTour){
-    let tempPath =[]
-    for(let n =0;n<bestTour.length;n++){
-        tempPath[tempPath.length]=points[n];
-    }
-    console.log(tempPath);
-    return tempPath;
-}
 function createMatrixAdjacencies(pointMatrix){
     let newMatrix = [];
     for (let i = 0; i < pointMatrix.length; i++) {
@@ -142,9 +139,9 @@ function createMatrixAdjacencies(pointMatrix){
 async function antAlgorithm(distances, numIterations = 100,evaporationRate =1, Alpha, Beta, q){
     let bestTour;
     let bestTourLength = Infinity;
-
+    work = true;
     for (let iteration = 1; iteration <= numIterations; iteration++) {
-
+        if(!work)return ;
         const [currentBestTour, currentBestTourLength] = await ACO(distances, numIterations,  evaporationRate, Alpha, Beta, q);
 
         // обновление кратчайшего пути
@@ -154,8 +151,6 @@ async function antAlgorithm(distances, numIterations = 100,evaporationRate =1, A
         }
 
         // отрисовка
-
-        let correctPath = convertNumberInCoodinate(currentBestTour);
         createPath(currentBestTour);
 
         // вывод информации в логи

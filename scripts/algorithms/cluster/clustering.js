@@ -1,14 +1,3 @@
-function getAverage(pointArray) {
-
-    let data = [0, 0];
-    for (let i = 0; i < 2; i++) {
-        for (let j = 0; j < pointArray.length; j++) {
-            data[i] += pointArray[j][i];
-        }
-        data[i] /= pointArray.length;
-    }
-    return data;
-}
 
 function randomInt(min, max) {
     return Math.floor(min + Math.floor(Math.random() * (max - min)));
@@ -66,7 +55,7 @@ function createClusters(centroids, pointArray) {
     let clusters = [];
     for (let i = 0; i < centroids.length; i++)
         clusters[i] = [];
-
+    if(!work)return;
     const bigVar = 1.0e+35;
 
     for (let i = 0; i < pointArray.length; i++) {
@@ -96,7 +85,7 @@ function getNewCentroids(clusters) {
     let centroids = [];
     for (let i = 0; i < clusters.length; i++)
         centroids[i] = [];
-
+    if(!work)return;
     for (let i = 0; i < 2; i++) {
         for (let j = 0; j < clusters.length; j++) {
             let temp = 0;
@@ -140,6 +129,7 @@ function createDotsByMatrix(matrixClusters, matrixColor) {
 
         }
     }
+    if(!work)return;
 }
 
 function getNewCluster(centroids, clusters, pointArray, colorsClusters, counter = 0) {
@@ -147,7 +137,7 @@ function getNewCluster(centroids, clusters, pointArray, colorsClusters, counter 
     createDotsByMatrix(clusters, colorsClusters)
     clusters = createClusters(centroids, pointArray);
     let newCentroids = getNewCentroids(clusters);
-
+    if(!work)return;
     counter++;
     let bool = false;
     for (let i = 0; i < centroids.length; i++) {
@@ -166,16 +156,17 @@ function getNewCluster(centroids, clusters, pointArray, colorsClusters, counter 
 }
 
 function KMean(countClusters, pointArray) {
+    work = true;
     let centroids = createVector(countClusters, pointArray);
     let clusters = createClusters(centroids, pointArray);
-
+    if(!work)return;
     let colorsClusters = createMatrixBySize(countClusters, 3);
-
+    if(!work)return;
     colorsClusters = generateColor(clusters, colorsClusters);
-
+    if(!work)return;
     let bool = true;
     while (bool) {
-
+        if(!work)return;
         bool = false;
         let newCentroids = getNewCluster(centroids, clusters, pointArray, colorsClusters);
         if (newCentroids === false) {
