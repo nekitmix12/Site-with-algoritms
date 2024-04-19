@@ -48,6 +48,7 @@ button {
 #canvas {
     background-color: black;
     position: relative;
+
     margin: 30px auto 30px 30px;
     display: inline-block;
 }
@@ -84,7 +85,7 @@ button:hover {
 }
 
 
-.valdiv {
+.valueOfDiv {
     display: flex;
     align-items: center;
     justify-content: space-between;

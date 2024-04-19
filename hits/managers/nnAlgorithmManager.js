@@ -24,17 +24,17 @@ let valuesDiv = document.getElementById('values');
 
 for (let i = 0; i < 10; i++) {
     let valDiv = document.createElement('div');
-    valDiv.className = 'valdiv';
+    valDiv.className = 'valueOfDiv';
 
     let digitP = document.createElement('p');
     digitP.className = 'digit';
-    digitP.id = 'ans_' + i;
+    digitP.id = 'ans' + i;
     digitP.textContent = i + ': ';
     valDiv.appendChild(digitP);
 
     let digitValueP = document.createElement('p');
     digitValueP.className = 'digitvalue';
-    digitValueP.id = 'digval_' + i;
+    digitValueP.id = 'digitValue' + i;
     valDiv.appendChild(digitValueP);
 
     valuesDiv.appendChild(valDiv);
@@ -42,7 +42,7 @@ for (let i = 0; i < 10; i++) {
 }
 function removeHighlight(){
     for (let i = 0; i < 10; i++) {
-        document.getElementById("digval_" + i).classList.remove('highlight');
+        document.getElementById("digitValue" + i).classList.remove('highlight');
     }
 }
 function highlightMaxValue() {
@@ -50,7 +50,7 @@ function highlightMaxValue() {
     let maxElem = null;
 
     for (let i = 0; i < 10; i++) {
-        let elem = document.getElementById("digval_" + i);
+        let elem = document.getElementById("digitValue" + i);
         let val = parseFloat(elem.textContent);
 
         if (val > maxVal) {
