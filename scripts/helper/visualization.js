@@ -420,24 +420,45 @@ function managePath(array) {
     }
 }
 
-function createPath(array) {
+function createPath(array,isBestRoute = false){
     let canvas = document.getElementById('fieldCanvas');
     let canvasField = canvas.getContext('2d');
     let slider = document.getElementById('slider');
     let traceColor = document.getElementById('traceColor');
-    console.log(array.length);
 
-    canvasField.beginPath();
-    canvasField.strokeStyle = traceColor.value;
-    canvasField.lineCap = 'round';
-    canvasField.lineWidth = slider.value / 2;
-    canvasField.moveTo(array[0][0] * slider.value + slider.value / 2, array[0][1] * slider.value + slider.value / 2);
+    canvasField.clearRect(0, 0, canvas.width, canvas.height);
 
-    for (let i = 1; i < array.length; i++) {
-        canvasField.lineTo(array[i][0] * slider.value + slider.value / 2, array[i][1] * slider.value + slider.value / 2);
-        console.log(array[i][0] + ' ' + array[i][1]);
+    for (let i = 0; i < array.length - 1; i++) {
+        let startX = points[array[i]][0]*slider.value + slider.value/2;
+        let startY = points[array[i]][1]*slider.value + slider.value/2;
+        let endX = points[array[i + 1]][0]*slider.value + slider.value/2;
+        let endY = points[array[i + 1]][1]*slider.value + slider.value/2;
+        canvasField.beginPath();
+        canvasField.strokeStyle = traceColor.value;
+        canvasField.lineCap = 'round';
+        canvasField.lineWidth = slider.value/2;
+        canvasField.moveTo(startX, startY);
+        canvasField.lineTo(endX, endY);
+        canvasField.stroke();
     }
-    canvasField.stroke();
+
+    if (isBestRoute) {
+
+        canvasField.strokeStyle = '#11ff00';
+        canvasField.lineCap = 'round';
+        canvasField.lineWidth = slider.value/2;
+        canvasField.beginPath();
+        canvasField.moveTo(points[array[0]][0]*slider.value + slider.value/2,
+            points[array[0]][1]*slider.value + slider.value/2);
+        for (let i = 1; i < array.length; i++) {
+            canvasField.lineTo(points[array[i]][0]*slider.value + slider.value/2,
+                points[array[i]][1]*slider.value + slider.value/2);
+        }
+        canvasField.closePath();
+        canvasField.stroke();
+    }
+
+
 }
 
 function createPicture(img, x, y, field, size) {

@@ -38,7 +38,7 @@ async function ACO(pointMatrix, numIterations = 100, evaporationRate =1, Alpha =
             visited.add(current);
             path.push(current);
 
-            // Loop through each city
+
             for (let i = 0; i < distanceMatrix.length - 1; i++) {
                 //здесь мы высчитываем вероятность появления события(МКН привет), заводим массив под частные события и вычисляем сначала сумму а потом каждое делим на сумму
                 const probabilities = [];
@@ -144,23 +144,21 @@ async function antAlgorithm(distances, numIterations = 100,evaporationRate =1, A
     let bestTourLength = Infinity;
 
     for (let iteration = 1; iteration <= numIterations; iteration++) {
-        // Run the ant colony optimization algorithm for the current iteration
+
         const [currentBestTour, currentBestTourLength] = await ACO(distances, numIterations,  evaporationRate, Alpha, Beta, q);
 
-        // Update the best tour if a shorter tour is found
+        // обновление кратчайшего пути
         if (currentBestTourLength < bestTourLength) {
             bestTour = currentBestTour;
             bestTourLength = currentBestTourLength;
         }
 
-        // Draw the pheromone trails and the best route for the current iteration
+        // отрисовка
 
         let correctPath = convertNumberInCoodinate(currentBestTour);
         createPath(currentBestTour);
 
-
-
-        // Display the current iteration and the length of the best tour
+        // вывод информации в логи
         console.log(`Iteration ${iteration}: Best tour length = ${bestTourLength}`);
         await new Promise(resolve => setTimeout(resolve, 10));
     }
