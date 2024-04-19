@@ -556,11 +556,6 @@ function launch(functionName){
         case ('genetic'):
             console.log("OK");
             deletePath();
-            console.log(points.length);
-            if (points.length < 4) {
-                alert("Draw more points.");
-                break;
-            }
             geneticAlgorithm();
             break;
     }
