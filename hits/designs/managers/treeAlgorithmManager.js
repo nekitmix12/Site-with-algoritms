@@ -73,7 +73,7 @@ function createTree() {
         return;
     }
 
-    readFile(inputFile.files[0], function(dataBase) {
+    readFile(inputFile.files[0], function (dataBase) {
         startTreeBuilding(dataBase);
         drawTree(root, treeRoot);
     });
@@ -94,6 +94,7 @@ function readFile(file, callback) {
         alert('Ошибка чтения файла');
     }
 }
+
 function start() {
     if (isReady) makeDecision();
 }

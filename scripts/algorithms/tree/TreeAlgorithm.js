@@ -1,4 +1,5 @@
 class Node {
+    htmlNode;
 
     constructor(data, name) {
 
@@ -304,7 +305,7 @@ function chooseSplittingParameter(matrix) {
         return Math.log(num) / Math.log(base);
     }
 
-    function doubleData(columnIngex) {
+    function doubleData(columnIndex) {
 
         class NumElem {
 
@@ -313,7 +314,7 @@ function chooseSplittingParameter(matrix) {
                 this.celElem = celElem;
             }
 
-        };
+        }
 
         let numsSorted = [];
         let nums = []
@@ -321,12 +322,12 @@ function chooseSplittingParameter(matrix) {
         for (let i = 1; i < matrix.length; i++) {
 
             nums.push(new NumElem(
-                matrix[i][columnIngex],
+                matrix[i][columnIndex],
                 matrix[i][matrix[0].length - 1]
             ));
 
             numsSorted.push(new NumElem(
-                matrix[i][columnIngex],
+                matrix[i][columnIndex],
                 matrix[i][matrix[0].length - 1]
             ));
         }
