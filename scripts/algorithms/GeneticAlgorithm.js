@@ -1,4 +1,3 @@
-
 // Функция обрабатывает клики по canvas и добавляет новые точки
     function handleMouseClick(e) {
         // Получаем координаты клика относительно canvas
@@ -39,11 +38,13 @@
         // Создаем копию лучшего пути и добавляем первый город в конец для замыкания пути
         const canvas = document.getElementById("fieldCanvas")
         const context = canvas.getContext("2d");
-        const extendedPath = bestPath.slice();
-        extendedPath.push(bestPath[0].slice());
+        const extendedPath = bestPath;
+        extendedPath.push(bestPath[0]);
+
+        console.log(bestPath);
 
         // Рисуем путь между городами
-        for (let i = 0; i < extendedPath.length - 1; ++i) {
+        for (let i = 0; i < bestPath.length - 1; i++) {
             const delta = [extendedPath[i + 1][0] - extendedPath[i][0], extendedPath[i + 1][1] - extendedPath[i][1]];
             const s = Math.sqrt(delta[0] * delta[0] + delta[1] * delta[1]);
 
@@ -55,6 +56,15 @@
             context.lineWidth = 10;
             context.stroke();
         }
+    }
+
+    // Проверка на совпадение массивов
+    function arraysEqual(a, b) {
+        if (a.length !== b.length) return false;
+        for (let i = 0; i < a.length; i++) {
+            if (a[i] !== b[i]) return false;
+        }
+        return true;
     }
 
 // Функция для перемешивания массива
@@ -156,12 +166,30 @@
         return [calculateAndPushDistance(firstChild), calculateAndPushDistance(secondChild)];
     }
 
+    function deletePoints() {
+        points = [];
+    }
+
 // Функция для очистки canvas и всех данных
     function clearCanvas() {
         let canvas =document.getElementById("fieldCanvas");
         let context = canvas.getContext("2d");
         context.clearRect(0, 0,  canvas.width, canvas.height);
-        points = [];
+        deletePoints();
+    }
+
+// Функция для очистки путей после предыдущего запуска
+    function clearPath(){
+        let canvas =document.getElementById("fieldCanvas");
+        let context = canvas.getContext("2d");
+        context.clearRect(0, 0,  canvas.width, canvas.height);
+
+        for (let i = 0; i < points.length; i++) {
+            console.log("Item: ", points[i]);
+            context.beginPath();
+            context.arc(points[i][0], points[i][1], 15, 0, 2 * Math.PI, false);
+            context.fill();
+        }
     }
 
 // Функция для ожидания заданного времени
@@ -181,6 +209,7 @@
 
         // Запоминаем лучшую хромосому
         let bestChromosome = population[0].slice();
+        console.log(bestChromosome);
 
         // Переменная для отслеживания завершения алгоритма
         let finish = 5;
@@ -206,7 +235,7 @@
             population.sort((a, b) => a[a.length - 1] - b[b.length - 1]);
 
             // Если нашли лучшую хромосому, обновляем bestChromosome и сбрасываем счетчик finish
-            if (JSON.stringify(bestChromosome) !== JSON.stringify(population[0])) {
+            if (!arraysEqual(bestChromosome, population[0])) {
                 bestChromosome = population[0].slice();
                 finish = 5;
             }
