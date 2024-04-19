@@ -58,7 +58,7 @@ function createButtonStart(functionName) {
     buttonStart.style.width = '100px';
     buttonStart.style.position = 'absolute';
     buttonStart.style.top = '20%';
-    buttonStart.style.right = '0';
+    buttonStart.style.right = '5%';
     buttonStart.style.backgroundColor = '#1D1F20';
     buttonStart.style.color = '#FFFFFF';
     buttonStart.style.border = 'none';
@@ -88,7 +88,7 @@ function createButtonClear() {
     buttonClear.style.width = '100px';
     buttonClear.style.position = 'absolute';
     buttonClear.style.top = '30%';
-    buttonClear.style.right = '0';
+    buttonClear.style.right = '5%';
     buttonClear.style.backgroundColor = '#1D1F20';
     buttonClear.style.color = '#FFFFFF';
     buttonClear.style.border = 'none';
@@ -98,7 +98,7 @@ function createButtonClear() {
     buttonClear.style.cursor = 'pointer';
     buttonClear.style.textAlign = 'center';
     buttonClear.onmouseover = function () {
-        this.style.backgroundColor = '#ff4757';
+        this.style.backgroundColor = 'blue';
     };
     buttonClear.onmouseout = function () {
         this.style.backgroundColor = '#1D1F20';
@@ -175,7 +175,7 @@ function createSliderSize() {
     sliderSize.value = '10';
     sliderSize.style.position = 'absolute';
     sliderSize.style.top = '40%';
-    sliderSize.style.right = '0';
+    sliderSize.style.right = '5%';
     sliderSize.style.zIndex = '2';
     sliderSize.style.width = '200px';
     sliderSize.style.height = '25px';
@@ -244,13 +244,24 @@ function createColorTrace() {
 function createGenerationMapButton() {
     let generationMap = document.createElement('button');
     generationMap.id = 'generationMap';
-    generationMap.style.width = '50px';
-    generationMap.style.height = '20px';
-    generationMap.style.backgroundColor = '#022cab';
-    generationMap.textContent = 'generationMap';
+    generationMap.style.width = '6vh';
+    generationMap.style.height = '3vh';
+    generationMap.style.padding = '15px 32px';
+    generationMap.style.textAlign ='center';
+    generationMap.style.display='flex';
+    generationMap.style.justifyContent='center';
+    generationMap.style.alignContent='center'
+    generationMap.style.color='white';
+    generationMap.style.fontSize='auto';
+    generationMap.style.transitionDuration='0.4s';
+    generationMap.style.backgroundColor = '#4CAF50';
+    generationMap.textContent = 'Сгенеировать Карту';
     generationMap.style.position = 'absolute';
     generationMap.style.top = '45%';
     generationMap.style.right = '0';
+    generationMap.onmouseover = function () {
+        this.style.backgroundColor='#45a049';
+    };
     document.body.append(generationMap);
 }
 
