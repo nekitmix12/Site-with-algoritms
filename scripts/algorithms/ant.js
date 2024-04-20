@@ -3,7 +3,6 @@ let pheromoneMatrix = [];
 
 async function ACO(pointMatrix, numIterations = 100, evaporationRate =1, Alpha = 1, Beta = 1, q=0.6) {
     //задаем количество "муравьев"
-
     let numAnts = pointMatrix.length;
 
     //изменяем точки в матрицу смежности

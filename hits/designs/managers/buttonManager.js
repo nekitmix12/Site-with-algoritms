@@ -230,14 +230,14 @@ function createGenerationMapButton(){
     document.body.append(generationMap);
 }
 
-function createNumInput(){
+function createNumInput(id='numField',left="5%",top="45%",ps = "count clusters"){
     let num = document.createElement('input');
     num.style.backgroundColor='#778edc';
-    num.id='numField';
-    num.type='text';
-    num.placeholder ='Count clusters';
-    num.style.left = '5%';
-    num.style.top='45%';
+    num.id=id;
+    num.type='number';
+    num.placeholder =ps;
+    num.style.left = left;
+    num.style.top=top;
     num.style.position = 'absolute';
     document.body.append(num);
 
@@ -245,7 +245,7 @@ function createNumInput(){
     let num = document.createElement('input');
     num.style.backgroundColor='#778edc';
     num.id='epsilon';
-    num.type='text';
+    num.type='number';
     num.placeholder ='Epsilon';
     num.style.left = '5%';
     num.style.top='50%';
@@ -256,7 +256,7 @@ function createNumInput(){
     let num = document.createElement('input');
     num.style.backgroundColor='#778edc';
     num.id='pointInNeighborhood';
-    num.type='text';
+    num.type='number';
     num.placeholder ='Neighborhood';
     num.style.left = '5%';
     num.style.top='55%';
@@ -362,6 +362,11 @@ function createVisualizationAnt(functionName){
     createColorTrace();
     createColorUser();
     createButtonBlock()
+    createNumInput("a","5%","45%","write a");
+    createNumInput("b","5%","48%","write b");
+    createNumInput("isp","5%","51%","write count iter");
+    createNumInput("p","5%","54%" ,"введите скороть испарения");
+
     creatArea(functionName);
 }
 
@@ -401,6 +406,10 @@ function deleteVisualizationAnt(){
     returnCoordinate();
     deleteColorTrace();
     deleteColorUser();
+    document.getElementById("a").remove();
+    document.getElementById("b").remove();
+    document.getElementById("isp").remove();
+    document.getElementById("p").remove();
 
 }
 function deleteVisualizationCluster(){
@@ -506,7 +515,12 @@ function launch(functionName){
             else if (points.length ===1)
                 alert('Вы добавили слишком мало городов');
             else {
-                antAlgorithm(points);
+                let a = document.getElementById('a')
+                let b = document.getElementById('b')
+                let iter = document.getElementById('isp')
+                let p = document.getElementById('p')
+
+                antAlgorithm(points,iter.value,0.6,a.value,b.value,p.value);
             }
             break;
         case ('cluster'):
