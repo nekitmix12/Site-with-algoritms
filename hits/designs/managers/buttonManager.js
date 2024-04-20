@@ -47,7 +47,7 @@ function createButtonStart(functionName) {
     buttonStart.style.transition = 'all 0.3s ease 0s';
     buttonStart.style.cursor = 'pointer';
     buttonStart.style.textAlign = 'center';
-    buttonStart.textContent = 'Start';
+    buttonStart.textContent = 'Старт';
     buttonStart.onmouseover = function() { this.style.backgroundColor = '#ff4757'; };
     buttonStart.onmouseout = function() { this.style.backgroundColor = '#1D1F20'; };
     document.body.append(buttonStart);
@@ -55,8 +55,8 @@ function createButtonStart(functionName) {
 function createButtonClear() {
     let buttonClear = document.createElement('button');
     buttonClear.id = 'clearButton';
-    buttonClear.title = 'Clear';
-    buttonClear.textContent = 'Clear';
+    buttonClear.title = 'Очистить';
+    buttonClear.textContent = 'Очистить';
     buttonClear.style.zIndex = '2';
     buttonClear.style.height = '40px';
     buttonClear.style.width = '100px';
@@ -264,7 +264,7 @@ function createGenerationMapButton(){
     generationMap.style.width = '10vh';
     generationMap.style.height='5vh';
     generationMap.style.backgroundColor =  '#022cab';
-    generationMap.textContent = 'generationMap';
+    generationMap.textContent = 'Генерировать';
     generationMap.style.position = 'absolute';
     generationMap.style.top = '45%';
     generationMap.style.right = '5%';
@@ -501,13 +501,13 @@ function manage(functionName){
         }
         use = true;
         lastId = functionName;
-        console.log(lastFunction + ' ' + use + ' ' + lastId + ';')
+
     } else if (use && lastId===functionName){
         lastFunction();
         use = false;
         lastId = undefined;
 
-        console.log(lastFunction + ' ' + use + ' ' + lastId + ';')
+
     }else if (use && lastId!==functionName){
 
         lastFunction();
@@ -592,7 +592,7 @@ function launch(functionName){
             main();
             break;
         case ('genetic'):
-            console.log("OK");
+
             deletePath();
             geneticAlgorithm();
             break;
