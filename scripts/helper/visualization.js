@@ -4,7 +4,7 @@ let finishCoordinate = [];
 let row;
 let col;
 let points;
-
+let work = true;
 
 function creatArea(functionName) {
 
@@ -19,6 +19,7 @@ function creatArea(functionName) {
     let canvasField;
     let traceColor;
     let colorUser;
+    let buttonBlock;
     console.log('do');
     switch (functionName) {
         case ('AStar'):
@@ -33,8 +34,11 @@ function creatArea(functionName) {
             traceColor = document.getElementById('traceColor');
             colorUser = document.getElementById('colorUser');
             borderGeneration = document.getElementById('generationMap');
+            buttonBlock = document.getElementById('buttonBlock');
             canvasField = canvas.getContext('2d');
 
+
+            buttonBlock.addEventListener("click",()=>work = false)
             borderColor.addEventListener('input', changeColorBorder);
 
             borderColor.addEventListener('input', () =>
@@ -84,31 +88,30 @@ function creatArea(functionName) {
             canvas = document.getElementById('fieldCanvas');
             buttonClear = document.getElementById('clearButton');
             startButton = document.getElementById('startButton');
+            buttonBlock = document.getElementById('buttonBlock');
             slider = document.getElementById('slider');
             colorUser = document.getElementById('colorUser');
             traceColor = document.getElementById('traceColor');
             canvasField = canvas.getContext('2d');
 
-            traceColor.addEventListener('input', () => {
-                traceColor = this.value;
-            });
+            buttonBlock.addEventListener("click",()=>work = false)
+
+            traceColor.addEventListener('input',()=> {
+                traceColor = this.value;}) ;
             console.log(traceColor.value);
             startButton.addEventListener("click", () => {
-                manageStartAnt(canvas, canvasField, slider, colorUser.value);
-            });
+                manageStartAnt(canvas,canvasField,slider,colorUser.value);});
 
-            slider.addEventListener('input', () => {
-                sliderManegeAnt(slider, canvasField, canvas)
-            });
+            slider.addEventListener('input', ()=>{
+                sliderManegeAnt(slider,canvasField,canvas)});
 
-            buttonClear.addEventListener("click", () => {
-                buttonClearManege(canvas, slider, canvasField)
-            });
+            buttonClear.addEventListener("click",()=>{
+                buttonClearManege(canvas,slider,canvasField)});
 
-            createMatrix(canvas, slider);
+            createMatrix(canvas,slider);
 
-            canvas.addEventListener('mousedown', (event) =>
-                draw(event, canvas, canvasField, slider, colorUser.value));
+            canvas.addEventListener('mousedown',(event)=>
+                draw(event,canvas,canvasField,slider,colorUser.value));
             break;
         case ('cluster'):
             canvas = document.getElementById('fieldCanvas');
@@ -116,7 +119,10 @@ function creatArea(functionName) {
             startButton = document.getElementById('startButton');
             slider = document.getElementById('slider');
             colorUser = document.getElementById('colorUser');
+            buttonBlock = document.getElementById('buttonBlock');
             canvasField = canvas.getContext('2d');
+
+            buttonBlock.addEventListener("click",()=>work = false)
 
             startButton.addEventListener("click", () => {
                 manageCluster(canvas, canvasField, slider, colorUser.value);
@@ -404,44 +410,74 @@ function createPointWithDeleteLate(array) {
     canvasField.closePath();
 }
 
-function managePath(array) {
+function managePath(array,iter = 0) {
+    if(!work)return;
     let canvas = document.getElementById('fieldCanvas');
     let traceColor = document.getElementById('traceColor');
     let slider = document.getElementById('slider');
     let img = document.createElement('img');
     let canvasField = canvas.getContext('2d');
-    img.src = 'resources/penguin-svgrepo-com.svg';
+    img.src = '../../hits/designs/resources/forAStar/bomb-1-svgrepo-com.svg';
     img.style.position = 'absolute';
     canvasField.fillStyle = traceColor.value;
-
+    console.log(iter);
 
     img.onload = () => {
-        for (let i = 0; i < array.length - 1; i++) {
-            canvasField.fillRect(array[i][0] * slider.value, array[i][1] * slider.value, slider.value, slider.value);
-            createPicture(img, array[i][0] * slider.value, array[i][1] * slider.value, canvasField, slider.value);
-            console.log(array);
-        }
+        if(iter>0)canvasField.fillRect(array[iter-1][0] * slider.value, array[iter-1][1] * slider.value,
+            slider.value, slider.value);
+
+        canvasField.fillRect(array[iter][0] * slider.value, array[iter][1] * slider.value,
+            slider.value, slider.value);
+        createPicture(img, array[iter][0] * slider.value, array[iter][1] * slider.value,
+            canvasField, slider.value);
+
+        if(iter < array.length - 1)
+            setTimeout(managePath, 50, array, iter + 1);
+
     }
+    //img.src = '../../hits/designs/resources/forAStar/explosion-bomb-svgrepo-com.svg';
+    if(!work)return;
+
 }
 
-function createPath(array) {
+function createPath(array,isBestRoute = false){
     let canvas = document.getElementById('fieldCanvas');
     let canvasField = canvas.getContext('2d');
     let slider = document.getElementById('slider');
     let traceColor = document.getElementById('traceColor');
-    console.log(array.length);
 
-    canvasField.beginPath();
-    canvasField.strokeStyle = traceColor.value;
-    canvasField.lineCap = 'round';
-    canvasField.lineWidth = slider.value / 2;
-    canvasField.moveTo(array[0][0] * slider.value + slider.value / 2, array[0][1] * slider.value + slider.value / 2);
-
-    for (let i = 1; i < array.length; i++) {
-        canvasField.lineTo(array[i][0] * slider.value + slider.value / 2, array[i][1] * slider.value + slider.value / 2);
-        console.log(array[i][0] + ' ' + array[i][1]);
+    canvasField.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < array.length - 1; i++) {
+        let startX = points[array[i]][0]*slider.value + slider.value/2;
+        let startY = points[array[i]][1]*slider.value + slider.value/2;
+        let endX = points[array[i + 1]][0]*slider.value + slider.value/2;
+        let endY = points[array[i + 1]][1]*slider.value + slider.value/2;
+        canvasField.beginPath();
+        canvasField.strokeStyle = traceColor.value;
+        canvasField.lineCap = 'round';
+        canvasField.lineWidth = slider.value/2;
+        canvasField.moveTo(startX, startY);
+        canvasField.lineTo(endX, endY);
+        canvasField.stroke();
     }
-    canvasField.stroke();
+
+    if (isBestRoute) {
+
+        canvasField.strokeStyle = '#11ff00';
+        canvasField.lineCap = 'round';
+        canvasField.lineWidth = slider.value/2;
+        canvasField.beginPath();
+        canvasField.moveTo(points[array[0]][0]*slider.value + slider.value/2,
+            points[array[0]][1]*slider.value + slider.value/2);
+        for (let i = 1; i < array.length; i++) {
+            canvasField.lineTo(points[array[i]][0]*slider.value + slider.value/2,
+                points[array[i]][1]*slider.value + slider.value/2);
+        }
+        canvasField.closePath();
+        canvasField.stroke();
+    }
+
+
 }
 
 function createPicture(img, x, y, field, size) {

@@ -8,6 +8,7 @@ function hierarchicalClustering(point, countCluster, distance) {
     }
 
     function createCluster(clusters, clustersCenter) {
+        if (!work) return;
         //отрисока точек
         drawByDictionaryWithRandomColor(clusters, 0.5, 0, 0.5, 0.5);
 
@@ -15,7 +16,7 @@ function hierarchicalClustering(point, countCluster, distance) {
             return;
         let tempMax = 1e10;
         let tempCoordinate = [0, 0];
-
+        if (!work) return;
         for (let i = 0; clustersCenter[i] !== undefined; i++)
             for (let j = 0; clustersCenter[j] !== undefined; j++) {
                 if (i === j) continue;
@@ -27,7 +28,7 @@ function hierarchicalClustering(point, countCluster, distance) {
                     tempCoordinate[1] = j;
 
                 }
-
+                if (!work) return;
             }
         //добавление в кластер элемент который максимально близок
         clusters[tempCoordinate[0]] = concatForMatrix(clusters[tempCoordinate[0]], clusters[tempCoordinate[1]]);
@@ -40,7 +41,7 @@ function hierarchicalClustering(point, countCluster, distance) {
         clustersCenter = deleteDictionaryByNumber(clustersCenter, tempCoordinate[1]);
 
 // проблема возникает когда удаляем начальный элемент в словаре
-
+        if (!work) return;
         setTimeout(createCluster, 800, clusters, clustersCenter);
     }
 
@@ -49,21 +50,6 @@ function hierarchicalClustering(point, countCluster, distance) {
 
 function countCenterByTwoPoints(firstPoint, secondPoint) {
     return [(firstPoint[0] + secondPoint[0]) / 2, (firstPoint[1] + secondPoint[1]) / 2];
-}
-
-function countCenter(matrix) {
-    let counter = 0;
-    let coordinateCenter = [0, 0];
-    for (let i = 0; i < matrix.length; i++) {
-
-        counter++;
-        coordinateCenter[0] += matrix[i][0];
-        coordinateCenter[1] += matrix[i][1];
-    }
-    coordinateCenter[0] /= counter;
-    coordinateCenter[1] /= counter;
-
-    return coordinateCenter;
 }
 
 function concatForMatrix(firstMatrix, secondMatrix) {

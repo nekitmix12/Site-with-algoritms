@@ -1,114 +1,161 @@
-// Функция для вычисления расстояния между двумя точками
-function calculateDistance(point1, point2) {
-    const [x1, y1] = point1;
-    const [x2, y2] = point2;
-    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-}
 
-// Функция для инициализации матрицы расстояний на основе координат
-function initializeDistances(coordinates) {
-    const numCities = coordinates.length;
-    const distances = [];
-    for (let i = 0; i < numCities; i++) {
-        distances[i] = [];
-        for (let j = 0; j < numCities; j++) {
-            distances[i][j] = calculateDistance(coordinates[i], coordinates[j]);
+let pheromoneMatrix = [];
+
+async function ACO(pointMatrix, numIterations = 100, evaporationRate =1, Alpha = 1, Beta = 1, q=0.6) {
+    //задаем количество "муравьев"
+
+    let numAnts = pointMatrix.length;
+
+    //изменяем точки в матрицу смежности
+    let distanceMatrix = createMatrixAdjacencies(pointMatrix);
+    pheromoneMatrix = [];
+    //создаем матрицу ферамонов
+    const initialPheromone = 1 / (distanceMatrix.length * numAnts);
+    for (let i = 0; i < distanceMatrix.length; i++) {
+        const arr = [];
+        for (let j = 0; j < distanceMatrix.length; j++) {
+            arr.push(initialPheromone);
         }
-    }
-    return distances;
-}
-
-// Функция для инициализации матрицы феромонов
-function initializePheromones(numCities, initialValue) {
-    return Array.from({length: numCities}, () =>
-        Array.from({length: numCities}, () => initialValue)
-    );
-}
-
-// Функция для обновления феромонов
-function updatePheromones(pheromones, ants, evaporationRate, maxPheromone) {
-    for (let i = 0; i < pheromones.length; i++) {
-        for (let j = i + 1; j < pheromones[i].length; j++) {
-            pheromones[i][j] *= (1 - evaporationRate);
-            pheromones[j][i] *= (1 - evaporationRate);
-        }
+        pheromoneMatrix.push(arr);
     }
 
-    for (const ant of ants) {
-        const pheromoneToAdd = maxPheromone / ant.distance;
-        for (let i = 0; i < ant.path.length - 1; i++) {
-            const currentCity = ant.path[i];
-            const nextCity = ant.path[i + 1];
-            pheromones[currentCity][nextCity] += pheromoneToAdd;
-            pheromones[nextCity][currentCity] += pheromoneToAdd;
+    //лучший путь и его длина
+    let bestTour;
+    let bestTourLength = Infinity;
+
+    //находим лучший путь благодаря итерациям
+    for (let iter = 0; iter < numIterations; iter++) {
+        if(!work)return ;
+        //создание матрицы ферамонов для каждого муравья
+        const antPheromoneMatrix = [];
+        for (let i = 0; i < numAnts; i++) {
+            antPheromoneMatrix.push(pheromoneMatrix.slice());
         }
-    }
-}
 
-// Функция для выбора следующего города для муравья
-function selectNextCity(pheromones, visited, currentCity) {
-    const pheromoneLevels = pheromones[currentCity].map((pheromone, index) => {
-        if (!visited.has(index)) {
-            return pheromone;
-        }
-        return 0;
-    });
+        // поиск муравьями, каждый мураве стартует с новой точки
+        for (let ant = 0; ant < numAnts; ant++) {
+            if(!work)return ;
+            const path = [];
+            const visited = new Set();
+            let current =ant;
+            visited.add(current);
+            path.push(current);
 
-    const totalPheromone = pheromoneLevels.reduce((acc, val) => acc + val, 0);
-    if (totalPheromone === 0) {
-        return null; // Возвращаем null, если у текущего города заканчиваются доступные феромоны
-    }
 
-    const probabilities = pheromoneLevels.map(pheromone => pheromone / totalPheromone);
-
-    let cumulativeProbability = 0;
-    const randomValue = Math.random();
-
-    for (let i = 0; i < probabilities.length; i++) {
-        cumulativeProbability += probabilities[i];
-        if (randomValue <= cumulativeProbability) {
-            return i;
-        }
-    }
-}
-
-// Муравьиный алгоритм
-function antColonyOptimization(coordinates, numAnts, numIterations, initialPheromone, evaporationRate, maxPheromone) {
-    const numCities = coordinates.length;
-    const distances = initializeDistances(coordinates);
-    let bestPath;
-    let shortestDistance = Infinity;
-
-    for (let iteration = 0; iteration < numIterations; iteration++) {
-        const pheromones = initializePheromones(numCities, initialPheromone);
-        const ants = Array.from({length: numAnts}, () => {
-            const startCityIndex = Math.floor(Math.random() * numCities);
-            const path = [startCityIndex];
-            const visited = new Set([startCityIndex]);
-            let distance = 0;
-            while (visited.size < numCities) {
-                const currentCityIndex = path[path.length - 1];
-                const nextCityIndex = selectNextCity(pheromones, visited, currentCityIndex);
-                if (nextCityIndex === null) {
-                    break; // Выходим из цикла, если у текущего города заканчиваются доступные феромоны
+            for (let i = 0; i < distanceMatrix.length - 1; i++) {
+                if(!work)return ;
+                //здесь мы высчитываем вероятность появления события(МКН привет), заводим массив под частные события и вычисляем сначала сумму а потом каждое делим на сумму
+                const probabilities = [];
+                let denominator = 0;
+                for (let j = 0; j < distanceMatrix.length; j++) {
+                    if (!visited.has(j)) {
+                        const numerator = Math.pow(pheromoneMatrix[current][j], Alpha) * Math.pow(1 / distanceMatrix[current][j], Beta);
+                        denominator += numerator;
+                        probabilities.push(numerator);
+                    } else {
+                        probabilities.push(0);
+                    }
                 }
-                path.push(nextCityIndex);
-                distance += distances[currentCityIndex][nextCityIndex];
-                visited.add(nextCityIndex);
+                probabilities.forEach((_, index) => probabilities[index] /= denominator);
+
+
+                //здесь мы рандомно выбтраем в какой город пойдем
+                const random = Math.random();
+                let sum = 0;
+                let next;
+                for (let j = 0; j < probabilities.length; j++) {
+                    sum += probabilities[j];
+                    if (random < sum) {
+                        next = j;
+                        break;
+                    }
+                }
+
+                //собственно добавляем точки которые посетили,чтоб не посетить их снова
+                visited.add(next);
+                path.push(next);
+
+                // обнавляем значения ферамонов
+                antPheromoneMatrix[ant][current][next] += q / distanceMatrix[current][next];
+                antPheromoneMatrix[ant][next][current] += q / distanceMatrix[current][next];
+
+                //двигаемся в следующий город
+                current = next;
             }
-            distance += distances[path[path.length - 1]][path[0]]; // Добавляем расстояние до начального города
-            return {path, distance};
-        });
 
-        const bestAnt = ants.reduce((best, current) => current.distance < best.distance ? current : best, ants[0]);
+            // добавляем растояние для последнего города
+            let tourLength = 0;
+            for (let i = 0; i < path.length - 1; i++) {
+                tourLength += distanceMatrix[path[i]][path[i + 1]];
+            }
+            tourLength += distanceMatrix[path[path.length - 1]][path[0]];
 
-        if (bestAnt.distance < shortestDistance) {
-            bestPath = bestAnt.path;
-            shortestDistance = bestAnt.distance;
+            // обновляем ферамоны для последних точек
+            antPheromoneMatrix[ant][path[path.length - 1]][path[0]] += q / distanceMatrix[path[path.length - 1]][path[0]];
+            antPheromoneMatrix[ant][path[0]][path[path.length - 1]] += q / distanceMatrix[path[path.length - 1]][path[0]];
+            if(!work)return ;
+            // добавляем в матрицу испарнение
+            for (let i = 0; i < antPheromoneMatrix[ant].length; i++) {
+                for (let j = 0; j < antPheromoneMatrix[ant][i].length; j++) {
+                    antPheromoneMatrix[ant][i][j] *= 1 - evaporationRate;
+                    antPheromoneMatrix[ant][i][j] = Math.max(antPheromoneMatrix[ant][i][j], 0.0001);
+                }
+            }
+
+            // обновляем путь
+            if (tourLength < bestTourLength) {
+                bestTour = path;
+                bestTourLength = tourLength;
+            }
         }
 
-        updatePheromones(pheromones, ants, evaporationRate, maxPheromone);
+        // обновление глобального ферамонового следа
+        for (let i = 0; i < pheromoneMatrix.length; i++) {
+            for (let j = 0; j < pheromoneMatrix[i].length; j++) {
+                let sum = 0;
+                for (let ant = 0; ant < numAnts; ant++) {
+                    sum += antPheromoneMatrix[ant][i][j];
+                }
+                pheromoneMatrix[i][j] = (1 - evaporationRate) * pheromoneMatrix[i][j] + sum;
+            }
+        }
+        if(!work)return ;
     }
 
-    return {bestPath, shortestDistance};
+    console.log(bestTour);
+    console.log(bestTourLength);
+    return [bestTour, bestTourLength];
+}
+
+function createMatrixAdjacencies(pointMatrix){
+    let newMatrix = [];
+    for (let i = 0; i < pointMatrix.length; i++) {
+        newMatrix[i] = [];
+        for (let j = 0; j < pointMatrix.length; j++)
+            newMatrix[i][j] = getEuclideanDistance(pointMatrix[i], pointMatrix[j]);
+    }
+    return newMatrix;
+}
+async function antAlgorithm(distances, numIterations = 100,evaporationRate =1, Alpha, Beta, q){
+    let bestTour;
+    let bestTourLength = Infinity;
+    work = true;
+    for (let iteration = 1; iteration <= numIterations; iteration++) {
+        if(!work)return ;
+        const [currentBestTour, currentBestTourLength] = await ACO(distances, numIterations,  evaporationRate, Alpha, Beta, q);
+
+        // обновление кратчайшего пути
+        if (currentBestTourLength < bestTourLength) {
+            bestTour = currentBestTour;
+            bestTourLength = currentBestTourLength;
+        }
+
+        // отрисовка
+        createPath(currentBestTour);
+
+        // вывод информации в логи
+        console.log(`Iteration ${iteration}: Best tour length = ${bestTourLength}`);
+        await new Promise(resolve => setTimeout(resolve, 10));
+    }
+    createPath(bestTour, true);
 }

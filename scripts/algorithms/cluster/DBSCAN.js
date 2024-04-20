@@ -1,4 +1,5 @@
 function dbscan_naive(Points, epsilon, numPointInR, distance) {
+    work = true;
     let Noise = 0
     let ClusterNumber = 0
 
@@ -9,7 +10,7 @@ function dbscan_naive(Points, epsilon, numPointInR, distance) {
     clusters[Noise] = [];
 
     function regionQuery(tempPoint) {
-
+        if (!work) return;
         let array = [];
 
         for (let i = 0; i < Points.length; i++) {
@@ -20,37 +21,37 @@ function dbscan_naive(Points, epsilon, numPointInR, distance) {
     }
 
     function expandCluster(tempPoint, neighbours) {
-        console.log(clusters[ClusterNumber] === undefined);
+        if (!work) return;
         if (clusters[ClusterNumber] === undefined)
             clusters[ClusterNumber] = [];
-
+        if (!work) return;
         clusters[ClusterNumber][clusters[ClusterNumber].length] = tempPoint
         clusteredPoints.add(tempPoint)
         while (neighbours.length !== 0) {
             let q = neighbours.pop();
-            for (let i = 0; i < visitedPoints.length; i++)
-                console.log(visitedPoints[i]);
+            if (!work) return;
             if (!(visitedPoints.has(q))) {
                 visitedPoints.add(q);
                 let neighbourOfNeighbour = regionQuery(q);
                 if (neighbourOfNeighbour.length > numPointInR)
                     neighbours = concatForMatrix(neighbourOfNeighbour, neighbours);
-                console.log(neighbours);
+                if (!work) return;
             }
             if (!(clusteredPoints.has(q))) {
                 clusteredPoints.add(q);
                 clusters[ClusterNumber][clusters[ClusterNumber].length] = q;
                 if (clusters[Noise].indexOf(q) !== -1)
                     clusters[Noise].splice(clusters[Noise].indexOf(q), clusters[Noise].indexOf(q));
-                console.log(clusters[Noise]);
+                if (!work) return;
             }
+            if (!work) return;
         }
     }
 
     function loopingFunction(i = 0) {
         if (i >= Points.length) return clusters;
         let tempPoint = Points[i];
-
+        if (!work) return;
         if (visitedPoints.has(tempPoint)) {
             return setTimeout(loopingFunction, 800, i + 1);
         }
@@ -58,7 +59,7 @@ function dbscan_naive(Points, epsilon, numPointInR, distance) {
         visitedPoints.add(tempPoint);
 
         let neighbours = regionQuery(tempPoint);
-
+        if (!work) return;
         if (neighbours.length < numPointInR)
             clusters[Noise][clusters[Noise].length] = tempPoint;
         else {
@@ -66,6 +67,7 @@ function dbscan_naive(Points, epsilon, numPointInR, distance) {
 
             expandCluster(tempPoint, neighbours);
         }
+        if (!work) return;
         drawByDictionaryWithRandomColor(clusters, 0, 0.5, 1, 0.5)
         return setTimeout(loopingFunction, 800, i + 1);
 
@@ -74,7 +76,6 @@ function dbscan_naive(Points, epsilon, numPointInR, distance) {
 
     loopingFunction();
 
-//    drawByDictionaryWithRandomColor(clusters)
     return clusters;
 }
 
