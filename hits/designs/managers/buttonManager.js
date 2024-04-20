@@ -220,6 +220,8 @@ function createGenerationMapButton(){
     generationMap.id = 'generationMap';
     generationMap.style.width = '10vh';
     generationMap.style.height='5vh';
+    generationMap.style.fontSize='auto';
+    generationMap.style.color='white';
     generationMap.style.backgroundColor =  '#022cab';
     generationMap.textContent = 'Генерировать';
     generationMap.style.position = 'absolute';
