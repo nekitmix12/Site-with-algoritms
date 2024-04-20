@@ -172,7 +172,7 @@ function createSliderSize() {
 function createImgStart(){
     let imgStart = document.createElement('img');
     imgStart.id = 'startImg';
-    imgStart.src = 'resources/russia-svgrepo-com.svg'
+    imgStart.src = '../resources/russia-svgrepo-com.svg'
     imgStart.style.width = '10px';
     imgStart.style.position = 'absolute';
     imgStart.style.top = '35%';
@@ -184,7 +184,7 @@ function createImgStart(){
 function createImgFinish(){
     let imgFinish = document.createElement('img');
     imgFinish.id = 'finishImg';
-    imgFinish.src = 'resources/china-svgrepo-com.svg'
+    imgFinish.src = '../../resources/china-svgrepo-com.svg'
     imgFinish.style.width = '10px';
     imgFinish.style.position = 'absolute';
     imgFinish.style.top = '35%';

@@ -211,7 +211,7 @@ async function geneticAlgorithm() {
 
     // Основной цикл генетического алгоритма
     for (let i = 0; i < 10000; i++) {
-        console.log("Generation: ", i);
+
         // Уменьшаем размер популяции до изначального
         population = population.slice(0, points.length * points.length);
         drawPath(bestChromosome, 'red');
