@@ -261,13 +261,13 @@ function  createColorTrace(){
 function createGenerationMapButton(){
     let generationMap = document.createElement('button');
     generationMap.id = 'generationMap';
-    generationMap.style.width = '50px';
-    generationMap.style.height='20px';
+    generationMap.style.width = '10vh';
+    generationMap.style.height='5vh';
     generationMap.style.backgroundColor =  '#022cab';
     generationMap.textContent = 'generationMap';
     generationMap.style.position = 'absolute';
     generationMap.style.top = '45%';
-    generationMap.style.right = '20%';
+    generationMap.style.right = '5%';
     document.body.append(generationMap);
 }
 
