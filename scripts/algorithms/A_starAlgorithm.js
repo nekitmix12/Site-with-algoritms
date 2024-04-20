@@ -46,7 +46,7 @@ function aStarSearch(grid, start, goal) {
 
     // инициализация начальной и конечной ноды
     const startNode = node(...start);
-    var goalNode = node(...goal);
+    let goalNode = node(...goal);
 
     // инициализация очереди с приоритетом
     const frontier = new PriorityQueue();
