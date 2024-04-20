@@ -38,7 +38,7 @@ function createButtonStart(functionName) {
     buttonStart.style.width = '100px';
     buttonStart.style.position = 'absolute';
     buttonStart.style.top = '20%';
-    buttonStart.style.right = '5%';
+    buttonStart.style.right = '3%';
     buttonStart.style.backgroundColor = '#1D1F20';
     buttonStart.style.color = '#FFFFFF';
     buttonStart.style.border = 'none';
@@ -62,7 +62,7 @@ function createButtonClear() {
     buttonClear.style.width = '100px';
     buttonClear.style.position = 'absolute';
     buttonClear.style.top = '30%';
-    buttonClear.style.right = '5%';
+    buttonClear.style.right = '3%';
     buttonClear.style.backgroundColor = '#1D1F20';
     buttonClear.style.color = '#FFFFFF';
     buttonClear.style.border = 'none';
@@ -154,8 +154,8 @@ function createSliderSize() {
     sliderSize.id = 'slider';
     sliderSize.value = '10';
     sliderSize.style.position = 'absolute';
-    sliderSize.style.right = '10%';
-    sliderSize.style.top = '30%';
+    sliderSize.style.right = '5%';
+    sliderSize.style.top = '40%';
     sliderSize.style.zIndex = '2';
     sliderSize.style.width = '200px';
     sliderSize.style.height = '25px';
@@ -224,7 +224,7 @@ function createGenerationMapButton(){
     generationMap.textContent = 'Генерировать';
     generationMap.style.position = 'absolute';
     generationMap.style.top = '45%';
-    generationMap.style.right = '5%';
+    generationMap.style.right = '3%';
     document.body.append(generationMap);
 }
 
