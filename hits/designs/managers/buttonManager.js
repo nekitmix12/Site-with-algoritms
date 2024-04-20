@@ -115,7 +115,7 @@ function createField(){
 
     //значени для изменения размера поля
     let xOffset = 600;
-    let yOffset = 100;// header height
+    let yOffset = 250;// header height
 
     //200 для того чтоб одинакого хорошо работал и с
     field.width  = Math.ceil((window.innerWidth  - xOffset)/10)*10;
@@ -172,7 +172,7 @@ function createSliderSize() {
 function createImgStart(){
     let imgStart = document.createElement('img');
     imgStart.id = 'startImg';
-    imgStart.src = '../resources/russia-svgrepo-com.svg'
+    imgStart.src = '../designs/resources/russia-svgrepo-com.svg'
     imgStart.style.width = '10px';
     imgStart.style.position = 'absolute';
     imgStart.style.top = '35%';
@@ -184,7 +184,7 @@ function createImgStart(){
 function createImgFinish(){
     let imgFinish = document.createElement('img');
     imgFinish.id = 'finishImg';
-    imgFinish.src = '../../resources/china-svgrepo-com.svg'
+    imgFinish.src = '../designs/resources/china-svgrepo-com.svg'
     imgFinish.style.width = '10px';
     imgFinish.style.position = 'absolute';
     imgFinish.style.top = '35%';
