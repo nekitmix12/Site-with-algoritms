@@ -3,7 +3,7 @@ let startCoordinate = [];
 let finishCoordinate = [];
 let row;
 let col;
-let points;
+let points=[];
 let work = true;
 
 function creatArea(functionName) {
@@ -20,7 +20,6 @@ function creatArea(functionName) {
     let traceColor;
     let colorUser;
     let buttonBlock;
-    console.log('do');
     switch (functionName) {
         case ('AStar'):
 
@@ -98,7 +97,7 @@ function creatArea(functionName) {
 
             traceColor.addEventListener('input',()=> {
                 traceColor = this.value;}) ;
-            console.log(traceColor.value);
+
             startButton.addEventListener("click", () => {
                 manageStartAnt(canvas,canvasField,slider,colorUser.value);});
 
@@ -141,41 +140,18 @@ function creatArea(functionName) {
             canvas.addEventListener('mousedown', (event) =>
                 draw(event, canvas, canvasField, slider, colorUser.value));
             break;
-        case ('hits'):
-            canvas = document.getElementById('fieldCanvasForNeuralNetwork');
-            buttonClear = document.getElementById('clearButton');
+        case ('genetic'):
+
             startButton = document.getElementById('startButton');
-            const s_canvas = document.getElementById("scaled_canvas");
-            const resetButton = document.getElementById("reset");
+            canvas = document.getElementById('fieldCanvas');
+            buttonClear = document.getElementById('clearButton');
 
-            const CELL_COUNT = 50;
-            const CELL_SIZE = 10;
-            const width = CELL_SIZE * CELL_COUNT;
-            const height = CELL_SIZE * CELL_COUNT;
-            const PEN_SIZE = 30;
-            canvas.height = height;
-            canvas.width = width;
-            s_canvas.width = 50;
-            s_canvas.height = 50;
-            const scaledContext = s_canvas.getContext("2d");
+            buttonClear.addEventListener('click', clearCanvas);
+            canvas.addEventListener('click', handleMouseClick);
 
-
-            canvas.addEventListener("mousedown", (el) =>
-                startDrawing(el));
-            canvas.addEventListener("mouseup", () =>
-                endDrawing(scaledContext, canvas));
-            canvas.addEventListener("mousemove", (el) =>
-                drawNum(el, context));
-
-
-            document.getElementById("reset").addEventListener("click", () => {
-                reset_canvas(context);
-            });
-
-            const context = canvas.getContext("2d", {willReadFrequently: true});
-            context.imageSmoothingEnabled = true;
-            context.imageSmoothingQuality = "high";
-
+            startButton.addEventListener("click", () => {
+                launch(functionName);});
+            break;
 
     }
 
@@ -185,7 +161,7 @@ function creatArea(functionName) {
     }
 
     function changeColorUser() {
-        console.log(colorUser.value);
+
         colorUser.value = this.value;
     }
 
@@ -311,13 +287,13 @@ function getPoint() {
 function manageStartAnt(canvas, canvasField, slider, color) {
     matrixUpdate(canvas, canvasField, slider, color);
     getPoint();
-    console.log(color);
+
     launch(document.getElementById('startButton').value)
 }
 
 function matrixUpdate(canvas, canvasField, slider, color) {
     clearField(canvasField, canvas);
-    console.log(color + 'matrixUpdate');
+
     drawMapByMatrix(matrixA_star, canvas, canvasField, slider, color);
 }
 
@@ -387,7 +363,6 @@ function createPointWithDeleteLate(array) {
     let slider = document.getElementById('slider');
     let img = new Image();
     let traceColor = document.getElementById('traceColor').value;
-    console.log(traceColor);
     let borderColor = document.getElementById('colorUser').value;
     let canvasField = canvas.getContext('2d');
     img.src = 'resources/penguin-svgrepo-com.svg';
@@ -420,7 +395,7 @@ function managePath(array,iter = 0) {
     img.src = '../../hits/designs/resources/forAStar/bomb-1-svgrepo-com.svg';
     img.style.position = 'absolute';
     canvasField.fillStyle = traceColor.value;
-    console.log(iter);
+
 
     img.onload = () => {
         if(iter>0)canvasField.fillRect(array[iter-1][0] * slider.value, array[iter-1][1] * slider.value,
@@ -477,14 +452,13 @@ function createPath(array,isBestRoute = false){
         canvasField.stroke();
     }
 
-
 }
 
 function createPicture(img, x, y, field, size) {
     field.drawImage(img, x, y, size, size);
 }
 
-function reset_canvas(context) {
+function resetCanvas(context) {
     context.fillStyle = 'black';
     context.fillRect(0, 0, canvas.width, canvas.height);
     main();
@@ -531,10 +505,10 @@ function deleteBlock(event, canvasField, slider, canvas) {
     let correctX = matrixX * slider.value;
     let correctY = matrixY * slider.value;
     canvasField.fillStyle = '#7c0518';
-    console.log(canvas.style.backgroundColor + " event");
+
     canvasField.fillRect(correctX, correctY, slider.value, slider.value);
     matrixA_star[matrixY][matrixX] = 0;
-    console.log(matrixA_star);
+
 }
 
 function changeField(slider) {
@@ -557,7 +531,7 @@ function createBlock(event, canvasField, slider, colorUser) {
     canvasField.fillRect(correctX, correctY, slider.value, slider.value);
 
     matrixA_star[matrixY][matrixX] = 1;
-    console.log(matrixA_star);
+
 }
 
 function dragAndDrop(event, img, canvas, slider, numElement) {
@@ -583,12 +557,12 @@ function dragAndDrop(event, img, canvas, slider, numElement) {
             case 1:
                 startCoordinate[0] = Math.floor((event.pageX - canvas.getBoundingClientRect().x) / slider.value);
                 startCoordinate[1] = Math.floor((event.pageY - canvas.getBoundingClientRect().y) / slider.value);
-                console.log(startCoordinate);
+
                 break;
             case 2:
                 finishCoordinate[0] = Math.floor((event.pageX - canvas.getBoundingClientRect().x) / slider.value);
                 finishCoordinate[1] = Math.floor((event.pageY - canvas.getBoundingClientRect().y) / slider.value);
-                console.log(finishCoordinate);
+
         }
     }
 

@@ -122,8 +122,7 @@ async function ACO(pointMatrix, numIterations = 100, evaporationRate =1, Alpha =
         if(!work)return ;
     }
 
-    console.log(bestTour);
-    console.log(bestTourLength);
+
     return [bestTour, bestTourLength];
 }
 
@@ -153,8 +152,6 @@ async function antAlgorithm(distances, numIterations = 100,evaporationRate =1, A
         // отрисовка
         createPath(currentBestTour);
 
-        // вывод информации в логи
-        console.log(`Iteration ${iteration}: Best tour length = ${bestTourLength}`);
         await new Promise(resolve => setTimeout(resolve, 10));
     }
     createPath(bestTour, true);

@@ -127,50 +127,7 @@ function createField(){
     document.body.append(field);
 
 }
-function createCanvasForNeuralNetwork(){
-    let fieldCanvasForNeuralNetwork = document.createElement('canvas');
-    fieldCanvasForNeuralNetwork.id = 'fieldCanvasForNeuralNetwork';
-    fieldCanvasForNeuralNetwork.style.zIndex = '2';
-    fieldCanvasForNeuralNetwork.style.position = 'absolute';
-    fieldCanvasForNeuralNetwork.style.backgroundColor = '#F8F0D6FF';
-    fieldCanvasForNeuralNetwork.style.color = '#F8F0D6FF';
 
-    //значени для изменения размера поля
-    let xOffset = 600;
-    let yOffset = 100;// header height
-
-    //200 для того чтоб одинакого хорошо работал и с
-    fieldCanvasForNeuralNetwork.width  = Math.ceil((window.innerWidth  - xOffset)/10)*10;
-    fieldCanvasForNeuralNetwork.height = Math.ceil((window.innerHeight - yOffset)/10)*10;
-    fieldCanvasForNeuralNetwork.style.left='20%   ';
-    fieldCanvasForNeuralNetwork.style.right='20%';
-    fieldCanvasForNeuralNetwork.style.bottom='5%';
-    fieldCanvasForNeuralNetwork.style.top='5%';
-    document.body.append(fieldCanvasForNeuralNetwork);
-
-    launch('hits');
-
-}
-function createCanvasForNumbers(){
-    let fieldCanvasForForNumbers = document.createElement('canvas');
-    fieldCanvasForForNumbers.id = 'fieldCanvasForForNumbers';
-    fieldCanvasForForNumbers.style.zIndex = '2';
-    fieldCanvasForForNumbers.style.position = 'absolute';
-    fieldCanvasForForNumbers.style.backgroundColor = '#f5b475';
-    fieldCanvasForForNumbers.style.color = '#f5b475';
-
-    //значени для изменения размера поля
-    let xOffset = 600;
-    let yOffset = 100;// header height
-
-    //200 для того чтоб одинакого хорошо работал и с
-
-    fieldCanvasForForNumbers.style.left='80%   ';
-    fieldCanvasForForNumbers.style.right='80%';
-    fieldCanvasForForNumbers.style.bottom='5%';
-    fieldCanvasForForNumbers.style.top='5%';
-    document.body.append(fieldCanvasForForNumbers);
-}
 function createColorUser() {
     let colorBolder = document.createElement("input");
     colorBolder.id = 'colorUser';
@@ -305,10 +262,6 @@ function createNumInput(){
     document.body.append(num);
 
 }
-function createTower(){
-    let tower = document.createElement('img');
-
-}
 
 function deleteEpsilonInput(){
     document.getElementById('epsilon').remove();
@@ -409,13 +362,9 @@ function createVisualizationAnt(functionName){
     createButtonBlock()
     creatArea(functionName);
 }
-function createVisualizationNeuralNetwork(functionName){
-    createCanvasForNeuralNetwork();
-    createCanvasForNumbers();
 
-    creatArea(functionName);
-}
 function createVisualizationGenetic(functionName){
+
     createField();
     createButtonClear();
     createButtonStart(functionName);
@@ -465,15 +414,6 @@ function deleteVisualizationCluster(){
     deleteColorTrace();
 }
 
-
-
-
-function deleteVisualizationNeuralNetwork(){
-    deleteCanvasForNeuralNetwork();
-    deleteCanvasForNumbers();
-}
-
-
 function manage(functionName){
     if (!use ) {
         switch (functionName) {
@@ -489,11 +429,7 @@ function manage(functionName){
                 createVisualizationCluster(functionName);
                 lastFunction = deleteVisualizationCluster;
                 break;
-            case ('hits'):
 
-                createVisualizationNeuralNetwork(functionName);
-                lastFunction = deleteVisualizationNeuralNetwork;
-                break;
             case("genetic"):
                 createVisualizationGenetic(functionName);
                 lastFunction = deleteVisualizationGenetic;
@@ -525,10 +461,6 @@ function manage(functionName){
                 createVisualizationCluster(functionName);
                 lastFunction = deleteVisualizationCluster;
                 break;
-            case ('hits'):
-                createVisualizationNeuralNetwork(functionName);
-                lastFunction = deleteVisualizationNeuralNetwork;
-                break;
             case ('genetic'):
                 createVisualizationGenetic(functionName);
                 lastFunction = deleteVisualizationGenetic;
@@ -537,11 +469,7 @@ function manage(functionName){
         lastId = functionName;
 
     }
-
 }
-
-
-
 function launch(functionName){
     switch (functionName){
         case ('AStar'):
@@ -586,10 +514,6 @@ function launch(functionName){
             KMean(num,points);
             dbscan_naive(points,eps,neighborhood,getEuclideanDistance);
             hierarchicalClustering(points,num,getEuclideanDistance);
-            break;
-        case ('hits'):
-            setup();
-            main();
             break;
         case ('genetic'):
 
